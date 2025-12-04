@@ -1,0 +1,810 @@
+@charset "UTF-8";
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/* ============================================
+   ОСНОВНОЕ ИСПРАВЛЕНИЕ
+   ============================================ */
+body {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+  min-height: 100vh;
+  /* Важно: вся высота окна */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #e4e4e4;
+  padding: 20px;
+  /* Ключевое исправление: */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  /* Вертикальное центрирование */
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  /* Горизонтальное центрирование */
+}
+
+.page-container {
+  max-width: 1200px;
+  width: 100%;
+  /* Убедитесь, что контейнер занимает минимум высоту */
+  min-height: auto;
+  /* Если нужно центрировать содержимое внутри */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  /* Центрирование по вертикали внутри контейнера */
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  /* Центрирование по горизонтали внутри контейнера */
+  /* Для отладки - добавьте рамку */
+  /* border: 1px solid red; */
+}
+
+.title {
+  color: #e4e4e4;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.8rem;
+  text-align: center;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  /* Чтобы занимал всю ширину контейнера */
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+  }
+}
+
+/* ============================================
+   ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР
+   ============================================ */
+.center-container {
+  width: 100%;
+  background: rgba(30, 30, 30, 0.8);
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  -webkit-box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .center-container {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .center-container {
+    padding: 20px;
+  }
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+/* ============================================
+   DIRECTION-AWARE HOVER EFFECT
+   ============================================ */
+.direction-grid {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[3];
+      grid-template-columns: repeat(3, 1fr);
+  /* 3 карточки в ряд */
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: 100%;
+  max-width: 1100px;
+  /* Ограничиваем максимальную ширину */
+  margin: 0 auto;
+  /* Центрирование по горизонтали */
+  /* Центрирование содержимого внутри сетки */
+  justify-items: center;
+  /* Центрирует карточки в ячейках по горизонтали */
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  /* Центрирует карточки в ячейках по вертикали */
+}
+
+@media (max-width: 1024px) {
+  .direction-grid {
+    -ms-grid-columns: (1fr)[2];
+        grid-template-columns: repeat(2, 1fr);
+    /* 2 колонки на планшетах */
+    max-width: 800px;
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .direction-grid {
+    -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+    /* 1 колонка на мобильных */
+    max-width: 500px;
+    gap: 20px;
+  }
+}
+
+.direction-item {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  -webkit-perspective: 600px;
+          perspective: 600px;
+}
+
+.direction-item:hover {
+  z-index: 10;
+}
+
+.direction-item .card-main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #2a2a2a;
+  color: #e4e4e4;
+  border-radius: 12px;
+  text-decoration: none;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.direction-item .card-main:hover {
+  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  -webkit-transform: translateY(-5px);
+          transform: translateY(-5px);
+}
+
+.direction-item .card-main svg {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 15px;
+}
+
+.direction-item .card-main svg path {
+  fill: #e4e4e4;
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+}
+
+.direction-item .card-main .card-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  line-height: 1;
+}
+
+.direction-item .card-main .card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #e4e4e4;
+}
+
+.direction-item .card-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 25px;
+  border-radius: 12px;
+  pointer-events: none;
+  background: rgba(26, 188, 156, 0.95);
+  -webkit-transform: rotate3d(1, 0, 0, 90deg);
+          transform: rotate3d(1, 0, 0, 90deg);
+  opacity: 0;
+}
+
+.direction-item .card-hover h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+  color: white;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.direction-item .card-hover p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* ============================================
+   АНИМАЦИИ ДЛЯ НАПРАВЛЕНИЙ
+   ============================================ */
+@-webkit-keyframes in-top {
+  from {
+    -webkit-transform: rotate3d(-1, 0, 0, 90deg);
+            transform: rotate3d(-1, 0, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+@keyframes in-top {
+  from {
+    -webkit-transform: rotate3d(-1, 0, 0, 90deg);
+            transform: rotate3d(-1, 0, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes out-top {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(-1, 0, 0, 104deg);
+            transform: rotate3d(-1, 0, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@keyframes out-top {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(-1, 0, 0, 104deg);
+            transform: rotate3d(-1, 0, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes in-right {
+  from {
+    -webkit-transform: rotate3d(0, -1, 0, 90deg);
+            transform: rotate3d(0, -1, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes in-right {
+  from {
+    -webkit-transform: rotate3d(0, -1, 0, 90deg);
+            transform: rotate3d(0, -1, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes out-right {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(0, -1, 0, 104deg);
+            transform: rotate3d(0, -1, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@keyframes out-right {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(0, -1, 0, 104deg);
+            transform: rotate3d(0, -1, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes in-bottom {
+  from {
+    -webkit-transform: rotate3d(1, 0, 0, 90deg);
+            transform: rotate3d(1, 0, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes in-bottom {
+  from {
+    -webkit-transform: rotate3d(1, 0, 0, 90deg);
+            transform: rotate3d(1, 0, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes out-bottom {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(1, 0, 0, 104deg);
+            transform: rotate3d(1, 0, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@keyframes out-bottom {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(1, 0, 0, 104deg);
+            transform: rotate3d(1, 0, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes in-left {
+  from {
+    -webkit-transform: rotate3d(0, 1, 0, 90deg);
+            transform: rotate3d(0, 1, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes in-left {
+  from {
+    -webkit-transform: rotate3d(0, 1, 0, 90deg);
+            transform: rotate3d(0, 1, 0, 90deg);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes out-left {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 1, 0, 104deg);
+            transform: rotate3d(0, 1, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+@keyframes out-left {
+  from {
+    -webkit-transform: rotate3d(0, 0, 0, 0deg);
+            transform: rotate3d(0, 0, 0, 0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate3d(0, 1, 0, 104deg);
+            transform: rotate3d(0, 1, 0, 104deg);
+    opacity: 0;
+  }
+}
+
+.direction-item.in-top .card-hover {
+  -webkit-transform-origin: 50% 0%;
+          transform-origin: 50% 0%;
+  -webkit-animation: in-top 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: in-top 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-top .card-main {
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.direction-item.out-top .card-hover {
+  -webkit-transform-origin: 50% 0%;
+          transform-origin: 50% 0%;
+  -webkit-animation: out-top 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: out-top 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-right .card-hover {
+  -webkit-transform-origin: 100% 50%;
+          transform-origin: 100% 50%;
+  -webkit-animation: in-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: in-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-right .card-main {
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.direction-item.out-right .card-hover {
+  -webkit-transform-origin: 100% 50%;
+          transform-origin: 100% 50%;
+  -webkit-animation: out-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: out-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-bottom .card-hover {
+  -webkit-transform-origin: 50% 100%;
+          transform-origin: 50% 100%;
+  -webkit-animation: in-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: in-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-bottom .card-main {
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.direction-item.out-bottom .card-hover {
+  -webkit-transform-origin: 50% 100%;
+          transform-origin: 50% 100%;
+  -webkit-animation: out-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: out-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-left .card-hover {
+  -webkit-transform-origin: 0% 50%;
+          transform-origin: 0% 50%;
+  -webkit-animation: in-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: in-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.direction-item.in-left .card-main {
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.direction-item.out-left .card-hover {
+  -webkit-transform-origin: 0% 50%;
+          transform-origin: 0% 50%;
+  -webkit-animation: out-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: out-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================
+   КОНТЕНТ ДЛЯ КАРТОЧЕК (можно менять)
+   ============================================ */
+.icon-game {
+  font-size: 48px;
+}
+
+.icon-movie {
+  font-size: 48px;
+}
+
+.icon-music {
+  font-size: 48px;
+}
+
+.icon-book {
+  font-size: 48px;
+}
+
+.icon-code {
+  font-size: 48px;
+}
+
+.icon-sport {
+  font-size: 48px;
+}
+
+.card-color-1 .card-hover {
+  background: rgba(26, 188, 156, 0.95);
+}
+
+.card-color-2 .card-hover {
+  background: rgba(52, 152, 219, 0.95);
+}
+
+.card-color-3 .card-hover {
+  background: rgba(155, 89, 182, 0.95);
+}
+
+.card-color-4 .card-hover {
+  background: rgba(231, 76, 60, 0.95);
+}
+
+.card-color-5 .card-hover {
+  background: rgba(241, 196, 15, 0.95);
+}
+
+.card-color-6 .card-hover {
+  background: rgba(46, 204, 113, 0.95);
+}
+
+.card-type-game .card-main {
+  background: #2c3e50;
+}
+
+.card-type-movie .card-main {
+  background: #34495e;
+}
+
+.card-type-music .card-main {
+  background: #16a085;
+}
+
+.card-type-book .card-main {
+  background: #8e44ad;
+}
+
+.card-type-code .card-main {
+  background: #d35400;
+}
+
+.card-type-sport .card-main {
+  background: #27ae60;
+}
+
+/* ============================================
+   ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ
+   ============================================ */
+@-webkit-keyframes glow {
+  0%, 100% {
+    -webkit-box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+            box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+  }
+  50% {
+    -webkit-box-shadow: 0 0 20px rgba(26, 188, 156, 0.8);
+            box-shadow: 0 0 20px rgba(26, 188, 156, 0.8);
+  }
+}
+@keyframes glow {
+  0%, 100% {
+    -webkit-box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+            box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+  }
+  50% {
+    -webkit-box-shadow: 0 0 20px rgba(26, 188, 156, 0.8);
+            box-shadow: 0 0 20px rgba(26, 188, 156, 0.8);
+  }
+}
+
+.direction-item:hover .card-main {
+  -webkit-animation: glow 2s ease-in-out infinite;
+          animation: glow 2s ease-in-out infinite;
+}
+
+.direction-item {
+  opacity: 0;
+  -webkit-transform: translateY(20px);
+          transform: translateY(20px);
+  -webkit-animation: fadeInUp 0.6s ease forwards;
+          animation: fadeInUp 0.6s ease forwards;
+}
+
+.direction-item:nth-child(1) {
+  -webkit-animation-delay: 0.1s;
+          animation-delay: 0.1s;
+}
+
+.direction-item:nth-child(2) {
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
+}
+
+.direction-item:nth-child(3) {
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
+}
+
+.direction-item:nth-child(4) {
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+}
+
+.direction-item:nth-child(5) {
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s;
+}
+
+.direction-item:nth-child(6) {
+  -webkit-animation-delay: 0.6s;
+          animation-delay: 0.6s;
+}
+
+.direction-item:nth-child(7) {
+  -webkit-animation-delay: 0.7s;
+          animation-delay: 0.7s;
+}
+
+.direction-item:nth-child(8) {
+  -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s;
+}
+
+.direction-item:nth-child(9) {
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s;
+}
+
+.direction-item:nth-child(10) {
+  -webkit-animation-delay: 1s;
+          animation-delay: 1s;
+}
+
+.direction-item:nth-child(11) {
+  -webkit-animation-delay: 1.1s;
+          animation-delay: 1.1s;
+}
+
+.direction-item:nth-child(12) {
+  -webkit-animation-delay: 1.2s;
+          animation-delay: 1.2s;
+}
+
+@-webkit-keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+/* ============================================
+   ФУТЕР И ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ
+   ============================================ */
+.footer-note {
+  text-align: center;
+  margin-top: 40px;
+  color: rgba(228, 228, 228, 0.5);
+  font-size: 0.9rem;
+}
+
+.footer-note a {
+  color: rgba(26, 188, 156, 0.8);
+  text-decoration: none;
+}
+
+.footer-note a:hover {
+  color: #1abc9c;
+  text-decoration: underline;
+}
+
+/* ============================================
+   ПОДСКАЗКА ДЛЯ ПОЛЬЗОВАТЕЛЯ
+   ============================================ */
+.hint {
+  text-align: center;
+  margin: 30px 0;
+  color: rgba(228, 228, 228, 0.6);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.hint:before {
+  content: "💡 ";
+}
+/*# sourceMappingURL=style.css.map */

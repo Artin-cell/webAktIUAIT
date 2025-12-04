@@ -1,0 +1,435 @@
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   ОСНОВНОЕ ИСПРАВЛЕНИЕ
+   ============================================ */
+   body {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+    min-height: 100vh;                    /* Важно: вся высота окна */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e4e4e4;
+    padding: 20px;
+    
+    /* Ключевое исправление: */
+    display: flex;
+    align-items: center;                  /* Вертикальное центрирование */
+    justify-content: center;              /* Горизонтальное центрирование */
+}
+
+.page-container {
+    max-width: 1200px;
+    width: 100%;
+    
+    /* Убедитесь, что контейнер занимает минимум высоту */
+    min-height: auto;
+    
+    /* Если нужно центрировать содержимое внутри */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;              /* Центрирование по вертикали внутри контейнера */
+    align-items: center;                  /* Центрирование по горизонтали внутри контейнера */
+    
+    /* Для отладки - добавьте рамку */
+    /* border: 1px solid red; */
+}
+
+.title {
+    color: #e4e4e4;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 100%;              /* Чтобы занимал всю ширину контейнера */
+    
+    @media (max-width: 768px) {
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+    
+    @media (max-width: 480px) {
+        font-size: 1.6rem;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+}
+
+/* ============================================
+   ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР
+   ============================================ */
+.center-container {
+    width: 100%;
+    background: rgba(30, 30, 30, 0.8);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 40px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    
+    @media (max-width: 768px) {
+        padding: 25px;
+    }
+    
+    @media (max-width: 480px) {
+        padding: 20px;
+    }
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+   @keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   DIRECTION-AWARE HOVER EFFECT
+   ============================================ */
+
+// Переменные для эффекта
+$card-size: 200px;
+$card-gap: 10px;
+$border-radius: 12px;
+$animation-speed: 300ms;
+$animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Цвета для эффекта
+$card-bg: #2a2a2a;
+$card-hover-bg: rgba(26, 188, 156, 0.95);
+$card-shadow: rgba(0, 0, 0, 0.2);
+$text-primary: #e4e4e4;
+$text-secondary: rgba(228, 228, 228, 0.7);
+
+// Сетка карточек
+.direction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 карточки в ряд */
+    gap: 30px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    width: 100%;
+    max-width: 1100px; /* Ограничиваем максимальную ширину */
+    margin: 0 auto; /* Центрирование по горизонтали */
+    
+    /* Центрирование содержимого внутри сетки */
+    justify-items: center; /* Центрирует карточки в ячейках по горизонтали */
+    align-items: center; /* Центрирует карточки в ячейках по вертикали */
+    
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr); /* 2 колонки на планшетах */
+        max-width: 800px;
+        gap: 25px;
+    }
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr; /* 1 колонка на мобильных */
+        max-width: 500px;
+        gap: 20px;
+    }
+}
+
+// Отдельная карточка
+.direction-item {
+    position: relative;
+    width: 100%;
+    height: $card-size;
+    perspective: 600px;
+    
+    &:hover {
+        z-index: 10;
+    }
+    
+    // Основная часть карточки (видимая всегда)
+    .card-main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: $card-bg;
+        color: $text-primary;
+        border-radius: $border-radius;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 
+            0 5px 15px $card-shadow,
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        
+        &:hover {
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        svg {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+            
+            path {
+                fill: $text-primary;
+                transition: fill 0.3s ease;
+            }
+        }
+        
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            line-height: 1;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: $text-primary;
+        }
+    }
+    
+    // Скрытая часть (появляется при наведении)
+    .card-hover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 25px;
+        border-radius: $border-radius;
+        pointer-events: none;
+        background: $card-hover-bg;
+        transform: rotate3d(1, 0, 0, 90deg);
+        opacity: 0;
+        
+        h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+    }
+}
+
+/* ============================================
+   АНИМАЦИИ ДЛЯ НАПРАВЛЕНИЙ
+   ============================================ */
+
+// Вспомогательные миксины для анимаций
+@mixin animation-in($direction) {
+    @keyframes in-#{$direction} {
+        from {
+            @if $direction == 'top' {
+                transform: rotate3d(-1, 0, 0, 90deg);
+            } @else if $direction == 'right' {
+                transform: rotate3d(0, -1, 0, 90deg);
+            } @else if $direction == 'bottom' {
+                transform: rotate3d(1, 0, 0, 90deg);
+            } @else if $direction == 'left' {
+                transform: rotate3d(0, 1, 0, 90deg);
+            }
+            opacity: 0;
+        }
+        to {
+            transform: rotate3d(0, 0, 0, 0deg);
+            opacity: 1;
+        }
+    }
+}
+
+@mixin animation-out($direction) {
+    @keyframes out-#{$direction} {
+        from {
+            transform: rotate3d(0, 0, 0, 0deg);
+            opacity: 1;
+        }
+        to {
+            @if $direction == 'top' {
+                transform: rotate3d(-1, 0, 0, 104deg);
+            } @else if $direction == 'right' {
+                transform: rotate3d(0, -1, 0, 104deg);
+            } @else if $direction == 'bottom' {
+                transform: rotate3d(1, 0, 0, 104deg);
+            } @else if $direction == 'left' {
+                transform: rotate3d(0, 1, 0, 104deg);
+            }
+            opacity: 0;
+        }
+    }
+}
+
+// Генерируем все анимации
+$directions: 'top', 'right', 'bottom', 'left';
+
+@each $dir in $directions {
+    @include animation-in($dir);
+    @include animation-out($dir);
+}
+
+// Применяем анимации к классам
+@each $dir in $directions {
+    .direction-item.in-#{$dir} {
+        .card-hover {
+            @if $dir == 'top' {
+                transform-origin: 50% 0%;
+            } @else if $dir == 'right' {
+                transform-origin: 100% 50%;
+            } @else if $dir == 'bottom' {
+                transform-origin: 50% 100%;
+            } @else if $dir == 'left' {
+                transform-origin: 0% 50%;
+            }
+            animation: in-#{$dir} $animation-speed $animation-ease forwards;
+        }
+        
+        .card-main {
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+    }
+    
+    .direction-item.out-#{$dir} {
+        .card-hover {
+            @if $dir == 'top' {
+                transform-origin: 50% 0%;
+            } @else if $dir == 'right' {
+                transform-origin: 100% 50%;
+            } @else if $dir == 'bottom' {
+                transform-origin: 50% 100%;
+            } @else if $dir == 'left' {
+                transform-origin: 0% 50%;
+            }
+            animation: out-#{$dir} $animation-speed $animation-ease forwards;
+        }
+    }
+}
+
+/* ============================================
+   КОНТЕНТ ДЛЯ КАРТОЧЕК (можно менять)
+   ============================================ */
+
+// Пример иконок (можно использовать эмодзи или SVG)
+.icon-game { font-size: 48px; }
+.icon-movie { font-size: 48px; }
+.icon-music { font-size: 48px; }
+.icon-book { font-size: 48px; }
+.icon-code { font-size: 48px; }
+.icon-sport { font-size: 48px; }
+
+// Альтернативные цвета для карточек (по желанию)
+.card-color-1 .card-hover { background: rgba(26, 188, 156, 0.95); } // Бирюзовый
+.card-color-2 .card-hover { background: rgba(52, 152, 219, 0.95); } // Синий
+.card-color-3 .card-hover { background: rgba(155, 89, 182, 0.95); } // Фиолетовый
+.card-color-4 .card-hover { background: rgba(231, 76, 60, 0.95); }  // Красный
+.card-color-5 .card-hover { background: rgba(241, 196, 15, 0.95); } // Желтый
+.card-color-6 .card-hover { background: rgba(46, 204, 113, 0.95); } // Зеленый
+
+// Стили для разных типов контента
+.card-type-game .card-main { background: #2c3e50; }
+.card-type-movie .card-main { background: #34495e; }
+.card-type-music .card-main { background: #16a085; }
+.card-type-book .card-main { background: #8e44ad; }
+.card-type-code .card-main { background: #d35400; }
+.card-type-sport .card-main { background: #27ae60; }
+
+/* ============================================
+   ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ
+   ============================================ */
+
+// Эффект свечения при наведении
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(26, 188, 156, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(26, 188, 156, 0.8); }
+}
+
+.direction-item:hover .card-main {
+    animation: glow 2s ease-in-out infinite;
+}
+
+// Плавное появление карточек
+.direction-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+    
+    @for $i from 1 through 12 {
+        &:nth-child(#{$i}) {
+            animation-delay: $i * 0.1s;
+        }
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   ФУТЕР И ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ
+   ============================================ */
+.footer-note {
+    text-align: center;
+    margin-top: 40px;
+    color: rgba(228, 228, 228, 0.5);
+    font-size: 0.9rem;
+    
+    a {
+        color: rgba(26, 188, 156, 0.8);
+        text-decoration: none;
+        
+        &:hover {
+            color: rgba(26, 188, 156, 1);
+            text-decoration: underline;
+        }
+    }
+}
+
+/* ============================================
+   ПОДСКАЗКА ДЛЯ ПОЛЬЗОВАТЕЛЯ
+   ============================================ */
+.hint {
+    text-align: center;
+    margin: 30px 0;
+    color: rgba(228, 228, 228, 0.6);
+    font-style: italic;
+    font-size: 0.95rem;
+    
+    &:before {
+        content: "💡 ";
+    }
+}
