@@ -11,7 +11,7 @@
    ОСНОВНОЕ ИСПРАВЛЕНИЕ
    ============================================ */
    body {
-    background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+    background: linear-gradient(135deg, #070707 0%, #131313 100%);
     min-height: 100vh;                    /* Важно: вся высота окна */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #e4e4e4;
@@ -48,7 +48,7 @@
     margin-bottom: 50px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 5px 15px rgba(24, 24, 24, 0.5);
     width: 100%;              /* Чтобы занимал всю ширину контейнера */
     
     @media (max-width: 768px) {
@@ -68,7 +68,7 @@
    ============================================ */
 .center-container {
     width: 100%;
-    background: rgba(30, 30, 30, 0.8);
+    background: rgba(43, 43, 43, 0.8);
     border-radius: 25px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 40px;
@@ -113,7 +113,7 @@ $animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
 // Цвета для эффекта
 $card-bg: #2a2a2a;
-$card-hover-bg: rgba(26, 188, 156, 0.95);
+$card-hover-bg: rgba(51, 39, 13, 0.95);
 $card-shadow: rgba(0, 0, 0, 0.2);
 $text-primary: #e4e4e4;
 $text-secondary: rgba(228, 228, 228, 0.7);
@@ -346,17 +346,17 @@ $directions: 'top', 'right', 'bottom', 'left';
 .icon-sport { font-size: 48px; }
 
 // Альтернативные цвета для карточек (по желанию)
-.card-color-1 .card-hover { background: rgba(26, 188, 156, 0.95); } // Бирюзовый
-.card-color-2 .card-hover { background: rgba(52, 152, 219, 0.95); } // Синий
-.card-color-3 .card-hover { background: rgba(155, 89, 182, 0.95); } // Фиолетовый
-.card-color-4 .card-hover { background: rgba(231, 76, 60, 0.95); }  // Красный
-.card-color-5 .card-hover { background: rgba(241, 196, 15, 0.95); } // Желтый
-.card-color-6 .card-hover { background: rgba(46, 204, 113, 0.95); } // Зеленый
+.card-color-1 .card-hover { background: rgba(188, 137, 26, 0.95); } // Бирюзовый
+.card-color-2 .card-hover { background: rgba(188, 137, 26, 0.95); } // Синий
+.card-color-3 .card-hover { background: rgba(188, 137, 26, 0.95); } // Фиолетовый
+.card-color-4 .card-hover { background: rgba(188, 137, 26, 0.95); }  // Красный
+.card-color-5 .card-hover { background: rgba(188, 137, 26, 0.95); } // Желтый
+.card-color-6 .card-hover { background: rgba(188, 137, 26, 0.95); } // Зеленый
 
 // Стили для разных типов контента
-.card-type-game .card-main { background: #2c3e50; }
-.card-type-movie .card-main { background: #34495e; }
-.card-type-music .card-main { background: #16a085; }
+.card-type-game .card-main { background: #464646; }
+.card-type-movie .card-main { background: #5e4d34; }
+.card-type-music .card-main { background: #464646; }
 .card-type-book .card-main { background: #8e44ad; }
 .card-type-code .card-main { background: #d35400; }
 .card-type-sport .card-main { background: #27ae60; }
