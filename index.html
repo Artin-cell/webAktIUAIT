@@ -1,0 +1,3098 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/text-to-svg@3.1.5/build/text-to-svg.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/1.1/canvg.min.js"></script>
+    <title>Мой шаблон</title>
+    <!-- Подключаем конкретно Blazma Italic -->
+    <link href="https://fonts.cdnfonts.com/css/blazma" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/lexa" rel="stylesheet">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/blazma');
+        @import url('https://fonts.cdnfonts.com/css/lexa');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            /* Убираем прокрутку у body */
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        /* Левая панель с прокруткой */
+        .controls {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            /* Прокрутка только для левой панели */
+        }
+
+        .controls h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #E78E2E;
+            padding-bottom: 10px;
+        }
+
+        .controls input[type="file"] {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .controls button {
+            background: #E78E2E;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .controls button:hover {
+            background: #d67d1d;
+        }
+
+        /* Контейнер для предпросмотра справа */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            padding: 10px 0;
+            margin: 10px 0;
+            min-height: 0;
+            /* Важно для flex-элементов */
+        }
+
+        .preview-container {
+            width: 800px;
+            /* Увеличиваем ширину */
+            height: 800px;
+            /* Увеличиваем высоту */
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* SVG внутри контейнера */
+        .preview-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Подсказки */
+        .tips {
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .tips p {
+            margin: 5px 0;
+            padding: 5px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .controls-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #E78E2E;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #E78E2E;
+            cursor: pointer;
+            border: none;
+        }
+
+        .preview-container svg {
+            cursor: default;
+        }
+
+        .preview-container svg image {
+            cursor: grab;
+        }
+
+        .preview-container svg image:active {
+            cursor: grabbing;
+        }
+
+        /* Дополнительные стили для Blazma Italic */
+        .blazma-italic {
+            font-family: 'Blazma', sans-serif;
+            /* font-style: italic; */
+            font-weight: 400;
+        }
+
+        .st21,
+        .cls-10 {
+            font-family: 'Lexa', sans-serif !important;
+            font-size: 80pt !important;
+            fill: #1A1A1A !important;
+            stroke: #E78E2E !important;
+            stroke-width: 2 !important;
+            stroke-linejoin: round !important;
+            paint-order: stroke !important;
+        }
+
+        /* Стили для сворачиваемых блоков */
+        .collapsible {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            background: #f8f8f8;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: #f0f0f0;
+        }
+
+        .collapsible-arrow {
+            transition: transform 0.3s ease;
+            font-size: 12px;
+        }
+
+        .collapsible-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .collapsible-content.show {
+            max-height: 500px;
+            /* Достаточно большое значение */
+            padding: 15px;
+        }
+
+        .collapsible .collapsible-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Стили для значка вопроса */
+        .help-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #E78E2E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .help-icon:hover {
+            background: #d67d1d;
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .help-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .help-icon svg circle[stroke="#1C274C"],
+        .help-icon svg path[stroke="#1C274C"] {
+            stroke: white;
+        }
+
+        .help-icon svg circle[fill="#1C274C"] {
+            fill: white;
+        }
+
+        /* Окошко с подсказками */
+        .help-popup {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .help-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .help-content {
+            padding: 0;
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: #f8f8f8;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .help-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .help-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .help-close:hover {
+            background: #eee;
+            color: #333;
+        }
+
+        .help-body {
+            padding: 20px;
+        }
+
+        .help-body .tips p {
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: #f8f8f8;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.4;
+            transition: background 0.2s ease;
+        }
+
+        .help-body .tips p:hover {
+            background: #f0f0f0;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .help-popup {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+                bottom: 80px;
+            }
+        }
+
+        .preview-container svg image {
+            cursor: grab;
+            pointer-events: auto;
+        }
+
+        .preview-container svg image:active {
+            cursor: grabbing;
+        }
+
+        /* Убедитесь что clip-path не мешает событиям */
+        .preview-container svg g[clip-path] {
+            pointer-events: auto;
+            cursor: grab;
+        }
+
+        .preview-container svg g[clip-path]:active {
+            cursor: grabbing;
+        }
+
+        /* Стили для редактора текста */
+        .text-editor {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            margin-left: 20px;
+        }
+
+        .text-editor h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #E78E2E;
+            padding-bottom: 10px;
+        }
+
+        .editor-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .editor-group textarea,
+        .editor-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .editor-group textarea {
+            min-height: 80px;
+        }
+
+        /* Центрируем предпросмотр */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            background: #f0f0f0;
+            z-index: 100;
+            padding: 20px 0;
+        }
+
+        /* Обновляем основной контейнер */
+        .main-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            /* Занимаем всю высоту окна */
+            padding: 0 20px;
+            /* Убираем верхний и нижний padding */
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        /* Левая панель с прокруткой */
+        .controls {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .preview-container {
+            width: min(700px, 90vh);
+            /* Адаптивная ширина */
+            height: min(700px, 90vh);
+            /* Адаптивная высота */
+            aspect-ratio: 1 / 1;
+            /* Сохраняем квадратную форму */
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Правая панель редактора текста */
+        .text-editor {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .text-editor h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #E78E2E;
+            padding-bottom: 10px;
+        }
+
+        .editor-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .editor-group textarea,
+        .editor-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            margin-top: 8px;
+        }
+
+        .editor-group textarea {
+            min-height: 80px;
+        }
+
+        .editor-group button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .controls,
+            .text-editor {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        .controls button.download-btn {
+            background: #2E8B57 !important;
+            margin-top: 20px;
+        }
+
+        .controls button.download-btn:hover {
+            background: #26734A !important;
+        }
+
+        /* Окошко с подсказками */
+        .help-popup {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 380px;
+            max-height: 70vh;
+            /* Ограничиваем максимальную высоту */
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .help-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .help-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            /* Скрываем переполнение */
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: #f8f8f8;
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+            /* Запрещаем сжатие заголовка */
+        }
+
+        .help-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .help-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .help-close:hover {
+            background: #eee;
+            color: #333;
+        }
+
+        .help-body {
+            padding: 20px;
+            overflow-y: auto;
+            /* Включаем вертикальную прокрутку */
+            flex-grow: 1;
+            /* Занимаем все доступное пространство */
+        }
+
+        /* Стили для секций подсказок */
+        .tips-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .tips-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .tips-section h4 {
+            margin: 0 0 10px 0;
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .tips-section .tips p {
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: #f8f8f8;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.4;
+            transition: background 0.2s ease;
+        }
+
+        .tips-section .tips p:hover {
+            background: #f0f0f0;
+        }
+
+        .tips-section .tips p strong {
+            color: #1a1a1a;
+        }
+
+        /* Стили для скроллбара */
+        .help-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .help-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .help-body::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 3px;
+        }
+
+        .help-body::-webkit-scrollbar-thumb:hover {
+            background: #1a1a1a;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .help-popup {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+                bottom: 80px;
+                max-height: 60vh;
+                /* На мобильных меньше высота */
+            }
+
+            .help-header h3 {
+                font-size: 16px;
+            }
+
+            .tips-section h4 {
+                font-size: 15px;
+            }
+
+            .tips-section .tips p {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+        }
+
+        /* Для очень маленьких экранов */
+        @media (max-height: 600px) {
+            .help-popup {
+                max-height: 50vh;
+            }
+        }
+
+        /* Стили для поля ввода имени с курсивным placeholder */
+        #nameEditor::placeholder {
+            font-style: italic;
+            color: #999;
+            opacity: 1;
+            /* Для кроссбраузерности */
+        }
+
+        #nameEditor::-webkit-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        #nameEditor::-moz-placeholder {
+            font-style: italic;
+            color: #999;
+            opacity: 1;
+        }
+
+        #nameEditor:-ms-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        #nameEditor::-ms-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        /* Стили для textarea с курсивным placeholder */
+        #roleEditor::placeholder {
+            font-style: italic;
+            color: #999;
+            opacity: 1;
+        }
+
+        #roleEditor::-webkit-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        #roleEditor::-moz-placeholder {
+            font-style: italic;
+            color: #999;
+            opacity: 1;
+        }
+
+        #roleEditor:-ms-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        #roleEditor::-ms-input-placeholder {
+            font-style: italic;
+            color: #999;
+        }
+
+        /* Текст разработчика */
+        .developer-credit {
+            position: fixed;
+            bottom: 12px;
+            left: 370px;
+            /* 300px ширина controls + 20px padding + 5px расстояние */
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .developer-credit {
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                bottom: 15px;
+                font-size: 11px;
+                width: auto;
+                white-space: nowrap;
+            }
+        }
+
+        /* Шуточный блок с рекламой */
+        .advertisement-block {
+            margin-top: auto;
+            padding: 15px;
+            background: #f8f8f8;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            font-size: 12px;
+            white-space: pre-line;
+            /* Разрешает переносы строк */
+        }
+
+        /* Шуточный блок с рекламой */
+        .advertisement-block {
+            margin-top: auto;
+            padding: 15px;
+            background: #f8f8f8;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            font-size: 15px;
+        }
+
+        /* Контейнер для SVG */
+        .advertisement-svg {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Стили для SVG внутри блока */
+        .advertisement-svg svg {
+            width: 150px;
+            height: 150px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- Значок вопроса в правом нижнем углу -->
+    <div class="help-icon" onclick="toggleHelp()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle opacity="0.5" cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5" />
+            <path
+                d="M10.125 8.875C10.125 7.83947 10.9645 7 12 7C13.0355 7 13.875 7.83947 13.875 8.875C13.875 9.56245 13.505 10.1635 12.9534 10.4899C12.478 10.7711 12 11.1977 12 11.75V13"
+                stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
+            <circle cx="12" cy="16" r="1" fill="#1C274C" />
+        </svg>
+    </div>
+
+    <!-- Окошко с подсказками -->
+    <div class="help-popup" id="helpPopup">
+        <div class="help-content">
+            <div class="help-header">
+                <h3>Подсказки по работе с шаблоном</h3>
+                <button class="help-close" onclick="toggleHelp()">×</button>
+            </div>
+            <div class="help-body">
+
+                <!-- Блок загрузки файлов -->
+                <div class="tips-section">
+                    <h4>📁 Загрузка файлов</h4>
+                    <div class="tips">
+                        <p>• Нажмите "Выбрать папку"</p>
+                        <p>• Выберите папку с нужным именем</p>
+                    </div>
+                </div>
+
+                <!-- Блок работы с фото -->
+                <div class="tips-section">
+                    <h4>🖼️ Управление фотографией</h4>
+                    <div class="tips">
+                        <p>• <strong>ЛКМ + перетаскивание</strong> - перемещение фото</p>
+                        <p>• <strong>Колесико мыши</strong> - масштабирование фото</p>
+                        <p>• Используйте ползунки для точной настройки положения</p>
+                        <p>• Кнопка "Сбросить положение" вернет фото в исходное состояние</p>
+                    </div>
+                </div>
+
+                <!-- Блок работы с текстом -->
+                <div class="tips-section">
+                    <h4>✏️ Редактирование текста</h4>
+                    <div class="tips">
+                        <p>• Имя и роль автоматически извлекаются из названия файла</p>
+                        <p>• Для имени: введите текст и нажмите "Применить"</p>
+                        <p>• Для роли: текст применяется автоматически при вводе</p>
+                    </div>
+                </div>
+
+                <!-- Блок дополнительных элементов -->
+                <div class="tips-section">
+                    <h4>⚙️ Дополнительные элементы</h4>
+                    <div class="tips">
+                        <p>• <strong>Иконки 1 и 2</strong> - настраиваются в сворачиваемых блоках</p>
+                        <p>• <strong>Позиция даты</strong> - регулируется отдельным ползунком</p>
+                    </div>
+                </div>
+
+                <!-- Блок экспорта -->
+                <div class="tips-section">
+                    <h4>💾 Сохранение результата</h4>
+                    <div class="tips">
+                        <p>• Нажмите "Скачать PNG" для сохранения карточки</p>
+                        <p>• Изображение сохранится в высоком качестве (2000×2000px)</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Текст разработчика -->
+    <div class="developer-credit">
+        Разработано специально для МЦ ИУАИТ
+    </div>
+
+
+
+    <!-- Основной контейнер с тремя колонками -->
+    <div class="main-container">
+        <!-- Левая панель управления -->
+        <div class="controls">
+
+            <h3>Управление шаблоном</h3>
+
+            <div style="margin-bottom: 15px;">
+
+
+                <!-- Скрытый input file -->
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+
+                <!-- Кнопка, которая запускает выбор папки -->
+                <button onclick="loadPhoto()" style="margin-top: 10px;">
+                    Выбрать папку
+                </button>
+            </div>
+
+            <!-- Ползунки для управления фото -->
+            <div class="controls-group">
+                <strong>Положение фото:</strong>
+
+                <div class="slider-container">
+                    <label>Смещение по X: <span id="xValue">0</span>px</label>
+                    <input type="range" id="xSlider" min="-150" max="150" value="0" class="slider">
+                </div>
+
+                <div class="slider-container">
+                    <label>Смещение по Y: <span id="yValue">0</span>px</label>
+                    <input type="range" id="ySlider" min="-150" max="150" value="0" class="slider">
+                </div>
+
+                <div class="slider-container">
+                    <label>Масштаб: <span id="scaleValue">100</span>%</label>
+                    <input type="range" id="scaleSlider" min="50" max="200" value="100" class="slider">
+                </div>
+
+                <button onclick="resetPosition()" style="background: #666; margin-top: 10px;">Сбросить
+                    положение</button>
+            </div>
+
+            <div class="editor-group">
+                <strong>Позиция даты:</strong>
+                <div class="slider-container">
+                    <label>Смещение по Y: <span id="dateYValue">0</span>px</label>
+                    <input type="range" id="dateYSlider" min="-100" max="100" value="0" class="slider">
+                </div>
+                <button onclick="resetDatePosition()" style="background: #666; margin-top: 10px;">
+                    Сбросить позицию даты
+                </button>
+            </div>
+
+            <!-- Сворачиваемый блок для SVG 1 -->
+            <div class="controls-group collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible('svg1')">
+                    <strong>Иконка 1:</strong>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content" id="svg1-controls">
+                    <div class="slider-container">
+                        <label>Смещение по X: <span id="svg1XValue">8</span>px</label>
+                        <input type="range" id="svg1XSlider" min="-50" max="50" value="8" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <label>Смещение по Y: <span id="svg1YValue">0</span>px</label>
+                        <input type="range" id="svg1YSlider" min="-50" max="50" value="0" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <label>Масштаб: <span id="svg1ScaleValue">100</span>%</label>
+                        <input type="range" id="svg1ScaleSlider" min="50" max="1000" value="100" class="slider">
+                    </div>
+
+                    <button onclick="resetSVG1Position()" style="background: #666; margin-top: 10px;">Сбросить SVG
+                        1</button>
+                </div>
+            </div>
+
+
+
+            <!-- Сворачиваемый блок для SVG 2 -->
+            <div class="controls-group collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible('svg2')">
+                    <strong>Иконка 2:</strong>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content" id="svg2-controls">
+                    <div class="slider-container">
+                        <label>Смещение по X: <span id="svg2XValue">8</span>px</label>
+                        <input type="range" id="svg2XSlider" min="-50" max="50" value="8" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <label>Смещение по Y: <span id="svg2YValue">-27</span>px</label>
+                        <input type="range" id="svg2YSlider" min="-50" max="50" value="0" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <label>Масштаб: <span id="svg2ScaleValue">100</span>%</label>
+                        <input type="range" id="svg2ScaleSlider" min="50" max="1000" value="100" class="slider">
+                    </div>
+
+                    <button onclick="resetSVG2Position()" style="background: #666; margin-top: 10px;">Сбросить SVG
+                        2</button>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+
+
+
+        <!-- Центральная область предпросмотра -->
+        <div class="preview-area">
+            <h1 style="color: #333; margin-bottom: 20px;"></h1>
+            <div class="preview-container">
+                <svg version="1.1" id="Шаблон" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1440 1440"
+                    style="enable-background:new 0 0 1440 1440;" xml:space="preserve">
+                    <style type="text/css">
+                        .st0 {
+                            fill: #1A1A1A;
+                        }
+
+                        .st1 {
+                            fill: #E3E4E3;
+                        }
+
+                        .st2 {
+                            opacity: 0.6;
+                        }
+
+                        .st3 {
+                            fill: none;
+                            stroke: #ECECEC;
+                            stroke-width: 3;
+                            stroke-miterlimit: 10;
+                        }
+
+                        .st4 {
+                            fill: none;
+                            stroke: #ECECEC;
+                            stroke-width: 3;
+                            stroke-miterlimit: 10;
+                            stroke-dasharray: 28.7108, 28.7108;
+                        }
+
+                        .st5 {
+                            fill: none;
+                            stroke: #ECECEC;
+                            stroke-width: 3;
+                            stroke-miterlimit: 10;
+                            stroke-dasharray: 31.2166, 31.2166;
+                        }
+
+                        .st6 {
+                            fill: none;
+                            stroke: #ECECEC;
+                            stroke-width: 3;
+                            stroke-miterlimit: 10;
+                            stroke-dasharray: 30.9638, 30.9638;
+                        }
+
+                        .st7 {
+                            fill: none;
+                            stroke: #ECECEC;
+                            stroke-width: 3;
+                            stroke-miterlimit: 10;
+                            stroke-dasharray: 27.9931, 27.9931;
+                        }
+
+                        .st8 {
+                            fill: #FFFFFF;
+                            stroke: #E78E2E;
+                            stroke-miterlimit: 10;
+                        }
+
+                        .st9 {
+                            fill: #E78E2E;
+                        }
+
+                        .st10 {
+                            display: none;
+                        }
+
+                        .st11 {
+                            display: inline;
+                        }
+
+                        .st12 {
+                            font-family: 'MyriadPro-Regular';
+                        }
+
+                        .st13 {
+                            font-size: 48px;
+                        }
+
+                        .st14 {
+                            fill: none;
+                        }
+
+                        .st15 {
+                            opacity: 0.1;
+                        }
+
+                        .st16 {
+                            display: inline;
+                            fill: #1A1A1A;
+                        }
+
+                        .st17 {
+                            font-family: 'Lexa';
+                        }
+
+                        .st18 {
+                            font-size: 96.8593px;
+                        }
+
+                        .st19 {
+                            font-family: 'Blazma', sans-serif !important;
+
+                            font-weight: 400 !important;
+
+                        }
+
+
+
+                        .name-opaque {
+                            font-family: 'Blazma', sans-serif !important;
+
+                            font-weight: 400 !important;
+                            font-synthesis: style !important;
+                        }
+
+                        .st20 {
+                            font-size: 67.8015px;
+                        }
+                    </style>
+                    <g id="База">
+
+                        <rect id="Фон_00000066501780843408742730000005171409375061646518_" x="-0.5" y="-0.5" class="st0"
+                            width="1441" height="1441"></rect>
+                        <g>
+                            <path class="st1" d="M52.5,1380.2l19.7-56.3h12.7l-19.7,56.3H52.5z"></path>
+                            <path class="st1" d="M75.3,1380.2l19.7-56.3h12.7L88,1380.2H75.3z"></path>
+                            <path class="st1" d="M107.2,1392.2v-11.8h40.1v11.8H107.2z"></path>
+                            <path class="st1" d="M163.1,1376.2c-4.6-2.3-8.2-5.5-10.8-9.7s-3.8-9-3.8-14.4s1.3-10.3,3.8-14.4s6.2-7.4,10.8-9.7
+            c4.6-2.3,10-3.4,16.1-3.4c6.1,0,11.4,1.1,16.1,3.4c4.6,2.3,8.2,5.5,10.8,9.7s3.8,9,3.8,14.4s-1.3,10.3-3.8,14.4s-6.2,7.4-10.8,9.7
+            c-4.7,2.3-10,3.4-16.1,3.4C173.1,1379.6,167.7,1378.4,163.1,1376.2z M188.5,1361.6c2.2-2.3,3.3-5.4,3.3-9.6c0-4.1-1.1-7.3-3.3-9.6
+            s-5.4-3.4-9.4-3.4s-7.2,1.1-9.4,3.4c-2.2,2.3-3.3,5.4-3.3,9.6c0,4.1,1.1,7.3,3.3,9.6c2.2,2.3,5.4,3.4,9.4,3.4
+            S186.3,1363.9,188.5,1361.6z"></path>
+                            <path class="st1" d="M272.9,1355.5c2,2.1,3.1,4.8,3.1,8.2c0,5.2-2.5,9.2-7.5,11.9c-5,2.7-12.4,4.1-22.1,4.1
+            c-9.7,0-17.1-1.4-22.1-4.1s-7.5-6.7-7.5-11.9c0-3.3,1-6.1,3.1-8.2c2-2.1,5-3.6,8.9-4.3c-3.4-0.8-6.1-2.2-7.9-4.1
+            c-1.8-1.9-2.7-4.2-2.7-7c0-3.2,1.1-6,3.2-8.3c2.2-2.3,5.3-4.1,9.6-5.3c4.2-1.2,9.4-1.8,15.5-1.8s11.2,0.6,15.5,1.8
+            c4.2,1.2,7.4,3,9.6,5.3c2.2,2.3,3.2,5.1,3.2,8.3c0,2.8-0.9,5.2-2.7,7c-1.8,1.9-4.4,3.2-7.9,4.1
+            C267.9,1351.9,270.9,1353.3,272.9,1355.5z M254.8,1365c1.9-0.7,2.9-1.8,2.9-3.1c0-1.4-0.9-2.4-2.8-3.1c-1.9-0.7-4.7-1-8.4-1
+            s-6.5,0.3-8.4,1c-1.9,0.7-2.8,1.7-2.8,3.1c0,1.4,1,2.4,2.9,3.1c1.9,0.7,4.7,1.1,8.4,1.1C250.1,1366.1,252.9,1365.7,254.8,1365z
+             M238.8,1339.1c-1.7,0.7-2.6,1.6-2.6,2.9s0.9,2.2,2.6,2.9s4.3,1,7.6,1s5.9-0.3,7.6-1c1.7-0.7,2.6-1.6,2.6-2.9s-0.9-2.2-2.6-2.9
+            c-1.7-0.7-4.3-1-7.6-1S240.5,1338.4,238.8,1339.1z"></path>
+                        </g>
+                    </g>
+                    <g id="Фоновый_паттерн" class="st2">
+                        <path class="st3" d="M308.3,513.8H74.9v-58.9h78.3c6.7,0,12.2-5.5,12.2-12.2v-5.7c0-6.7-5.4-12.2-12.2-12.2H74.9V264.8h78.3
+        c6.7,0,12.2-5.4,12.2-12.1V247c0-6.7-5.4-12.2-12.2-12.2H74.9v-58.9h233.4v58.9H230c-6.7,0-12.2,5.4-12.2,12.2v5.7
+        c0,6.7,5.4,12.1,12.2,12.1h78.3v160.1H230c-6.7,0-12.2,5.4-12.2,12.2v5.7c0,6.7,5.4,12.2,12.2,12.2h78.3V513.8z">
+                        </path>
+                        <g>
+                            <path class="st3" d="M265.7,1005.3H132.6v-85h30.8c3.4,0,6.4-1.4,8.6-3.6s3.6-5.2,3.6-8.6c0-6.7-5.4-12.2-12.2-12.2h-30.8v-80.2
+            h30.8c3.4,0,6.4-1.4,8.6-3.6c2.2-2.2,3.6-5.2,3.6-8.6c0-6.7-5.4-12.2-12.2-12.2h-30.8v-80.2h30.8c3.4,0,6.4-1.4,8.6-3.6
+            c2.2-2.2,3.6-5.2,3.6-8.6c0-6.7-5.4-12.1-12.2-12.1h-30.8v-85h133.2v85h-32.1c-3.3,0-6.4,1.4-8.6,3.6c-2.2,2.2-3.6,5.2-3.6,8.6
+            c0,6.7,5.5,12.2,12.2,12.2h32.1v80.2h-32.1c-3.3,0-6.4,1.4-8.6,3.6c-2.2,2.2-3.6,5.2-3.6,8.6c0,6.7,5.5,12.1,12.2,12.1h32.1v80.2
+            h-32.1c-3.3,0-6.4,1.4-8.6,3.6c-2.2,2.2-3.6,5.2-3.6,8.6c0,6.7,5.5,12.2,12.2,12.2h32.1V1005.3z">
+                            </path>
+                            <g>
+                                <g>
+                                    <polyline class="st3" points="89.9,1005.3 74.9,1005.3 74.9,990.3                ">
+                                    </polyline>
+                                    <line class="st4" x1="74.9" y1="961.6" x2="74.9" y2="631.4"></line>
+                                    <polyline class="st3" points="74.9,617.1 74.9,602.1 89.9,602.1              ">
+                                    </polyline>
+                                    <line class="st5" x1="121.1" y1="602.1" x2="292.8" y2="602.1"></line>
+                                    <polyline class="st3" points="308.4,602.1 323.4,602.1 323.4,617.1               ">
+                                    </polyline>
+                                    <line class="st4" x1="323.4" y1="645.8" x2="323.4" y2="976"></line>
+                                    <polyline class="st3"
+                                        points="323.4,990.3 323.4,1005.3 308.4,1005.3                 ">
+                                    </polyline>
+                                    <line class="st5" x1="277.2" y1="1005.3" x2="105.5" y2="1005.3"></line>
+                                </g>
+                            </g>
+                        </g>
+                        <g>
+                            <g>
+                                <line class="st3" x1="1365.1" y1="1120.4" x2="1365.1" y2="1105.4"></line>
+                                <line class="st6" x1="1365.1" y1="1074.4" x2="1365.1" y2="780.3"></line>
+                                <polyline class="st3" points="1365.1,764.8 1365.1,749.8 1350.1,749.8            ">
+                                </polyline>
+                                <line class="st7" x1="1322.1" y1="749.8" x2="1056.2" y2="749.8"></line>
+                                <line class="st3" x1="1042.2" y1="749.8" x2="1027.2" y2="749.8"></line>
+                            </g>
+                        </g>
+                        <g>
+                            <g>
+                                <path class="st3" d="M1296.2,1234.7v3.1c0,3.6-2.9,6.5-6.5,6.5H1255v35.9c0,3.6-2.9,6.5-6.5,6.5h-3.1c-3.6,0-6.5-2.9-6.5-6.5
+                v-35.9h-87.2v35.9c0,3.6-2.9,6.5-6.5,6.5h-3.1c-3.6,0-6.5-2.9-6.5-6.5v-35.9h-34.6c-3.6,0-6.5-2.9-6.5-6.5v-3.1
+                c0-3.6,2.9-6.5,6.5-6.5h34.6v-35.8c0-3.6,2.9-6.5,6.5-6.5h3.1c3.6,0,6.5,2.9,6.5,6.5v35.8h87.2v-35.8c0-3.6,2.9-6.5,6.5-6.5h3.1
+                c3.6,0,6.5,2.9,6.5,6.5v35.8h34.6C1293.3,1228.2,1296.2,1231.1,1296.2,1234.7z"></path>
+                                <path class="st3"
+                                    d="M1077.7,1234.7v3.1c0,3.6-2.9,6.5-6.5,6.5h-43.9v-16.1h43.9C1074.7,1228.2,1077.7,1231.1,1077.7,1234.7z">
+                                </path>
+                                <path class="st3"
+                                    d="M1314.7,1234.7v3.1c0,3.6,2.9,6.5,6.5,6.5h43.9v-16.1h-43.9C1317.6,1228.2,1314.7,1231.1,1314.7,1234.7z">
+                                </path>
+                                <path class="st3"
+                                    d="M1141.7,1303.3h3.1c3.6,0,6.5,2.9,6.5,6.5v43.9h-16.1v-43.9C1135.2,1306.3,1138.1,1303.3,1141.7,1303.3z">
+                                </path>
+                                <path class="st3"
+                                    d="M1246.2,1303.3h3.1c3.6,0,6.5,2.9,6.5,6.5v43.9h-16.1v-43.9C1239.6,1306.3,1242.6,1303.3,1246.2,1303.3z">
+                                </path>
+                                <path class="st3"
+                                    d="M1141.7,1170.9h3.1c3.6,0,6.5-2.9,6.5-6.5v-43.9h-16.1v43.9C1135.2,1167.9,1138.1,1170.9,1141.7,1170.9z">
+                                </path>
+                                <path class="st3"
+                                    d="M1246.2,1170.9h3.1c3.6,0,6.5-2.9,6.5-6.5v-43.9h-16.1v43.9C1239.6,1167.9,1242.6,1170.9,1246.2,1170.9z">
+                                </path>
+                            </g>
+                            <rect x="1027.2" y="1120.4" class="st3" width="337.9" height="233.4"></rect>
+                        </g>
+                        <g>
+                            <g>
+                                <path class="st3" d="M1236.4,131.1v110.1h35.9c3.6,0,6.5,2.9,6.5,6.5v3.1c0,3.6-2.9,6.5-6.5,6.5h-35.9v87.2h35.9
+                c3.6,0,6.5,2.9,6.5,6.5v3.1c0,3.6-2.9,6.5-6.5,6.5h-35.9v34.6c0,3.6-2.9,6.5-6.5,6.5h-3.1c-3.6,0-6.5-2.9-6.5-6.5v-34.6h-35.8
+                c-3.6,0-6.5-2.9-6.5-6.5v-3.1c0-3.6,2.9-6.5,6.5-6.5h35.8v-87.2h-35.8c-3.6,0-6.5-2.9-6.5-6.5v-3.1c0-3.6,2.9-6.5,6.5-6.5h35.8
+                V131.1"></path>
+                                <path class="st3"
+                                    d="M1163,354.5v-3.1c0-3.6-2.9-6.5-6.5-6.5h-43.9V361h43.9C1160.1,361,1163,358.1,1163,354.5z">
+                                </path>
+                                <path class="st3"
+                                    d="M1163,250V247c0-3.6-2.9-6.5-6.5-6.5h-43.9v16.1h43.9C1160.1,256.6,1163,253.6,1163,250z">
+                                </path>
+                            </g>
+
+                            <rect x="1060.3" y="183.4"
+                                transform="matrix(4.489304e-11 -1 1 4.489304e-11 929.191 1529.2812)" class="st3"
+                                width="337.9" height="233.4"></rect>
+                        </g>
+                    </g>
+                    <g id="Основа_карточки">
+                        <g id="Основа_карточки">
+                            <defs>
+                                <clipPath id="photoClip">
+                                    <path d="M943.3,795.6H301.7c-22.1,0-40-17.9-40-40V111.4c0-22.1,17.9-40,40-40h641.5c22.1,0,40,17.9,40,40v644.1
+                            C983.3,777.6,965.3,795.6,943.3,795.6z" />
+                                </clipPath>
+                            </defs>
+
+                            <!-- Область для фото БЕЗ clip-path -->
+                            <g clip-path="url(#photoClip)">
+                                <image id="userPhoto" x="251.7" y="61.4" width="741.6" height="744.2" href=""
+                                    transform="translate(0, 0) scale(1)" />
+                            </g>
+
+                            <path class="st9" d="M1189.2,47.3H254c-22.1,0-40,17.9-40,40v1168.2c0,22.1,17.9,40,40,40h935.2c22.1,0,40-17.9,40-40V87.3
+                    C1229.2,65.2,1211.3,47.3,1189.2,47.3z M983.7,754.7c0,22.1-17.9,40-40,40H301.3c-22.1,0-40-17.9-40-40V112.3
+                    c0-22.1,17.9-40,40-40h642.5c22.1,0,40,17.9,40,40V754.7z" />
+
+                            <!-- Область для штрих-кода -->
+                            <g id="barcode-container" transform="translate(475.7 1199.2) scale(1.608888888888889, 1)"
+                                fill="#1a1a1a">
+                                <g id="barcode-content"></g>
+                            </g>
+                        </g>
+                        <text id="nameText" transform="matrix(1, 0, -0.2, 1, 262.2986, 873.46)"
+                            class="st0 st20 st19 name-opaque">Имя Фамилия
+                        </text>
+
+                        <!-- Новая область для роли -->
+                        <text id="roleText" transform="matrix(1, 0, -0.2, 1, 262.2986, 950.7)"
+                            class="st0 st20 st19 name-opaque" style="font-family: 'Blazma', sans-serif;">
+
+                        </text>
+
+                        <text class="cls-10" transform="translate(1060 241.9) rotate(90)" font-size="145px">
+                            <tspan x="10" y="0" class="st21">20.11</tspan>
+                        </text>
+                        <!-- Область для SVG 1 -->
+                        <g id="svg1-container" transform="translate(1033.9 101.7)" fill="#1a1a1a">
+                            <rect width="128" height="128" fill="none" stroke="none" stroke-dasharray="4"
+                                opacity="0.3" />
+                            <g id="svg1-content" transform="translate(64 64)"></g>
+                        </g>
+
+                        <!-- Область для SVG 2 -->
+                        <g id="svg2-container" transform="translate(1033.9 611)" fill="#1a1a1a">
+                            <rect width="128" height="128" fill="none" stroke="none" stroke-dasharray="4"
+                                opacity="0.3" />
+                            <g id="svg2-content" transform="translate(0 0)"></g>
+                        </g>
+
+
+
+
+                        <g>
+                            <rect x="213" y="1199.6" class="st0" width="31" height="31"></rect>
+                            <rect x="278.9" y="1265.4" class="st0" width="31" height="31"></rect>
+                            <rect x="278.9" y="1199.6" class="st0" width="31" height="31"></rect>
+                            <rect x="213" y="1265.4" class="st0" width="31" height="31"></rect>
+                            <g>
+                                <line class="st0" x1="228.5" y1="1215.1" x2="294.4" y2="1281"></line>
+                                <path class="st0" d="M237,1206.7c9.3,20.9,27.1,39.8,45.1,53.6c6.3,4.6,12.9,9,20.7,12.2c0,0-17,17-17,17
+                c-10.5-23.8-33.2-46.6-55-60.2c-3.4-2.1-6.9-4-10.8-5.6L237,1206.7L237,1206.7z"></path>
+                            </g>
+                        </g>
+                        <g>
+                            <rect x="214" y="800.8" class="st0" width="38.7" height="5.8"></rect>
+
+                            <rect x="214" y="800.8" transform="matrix(4.488302e-11 1 -1 4.488302e-11 1037.084 570.3386)"
+                                class="st0" width="38.7" height="5.8"></rect>
+                        </g>
+                        <g>
+                            <rect x="214" y="997.8" class="st0" width="38.7" height="5.8"></rect>
+
+                            <rect x="214" y="997.8" transform="matrix(4.488302e-11 1 -1 4.488302e-11 1234.0504 767.305)"
+                                class="st0" width="38.7" height="5.8"></rect>
+                        </g>
+                        <g>
+                            <rect x="214" y="63.7" class="st0" width="38.7" height="5.8"></rect>
+
+                            <rect x="214" y="63.7" transform="matrix(4.488302e-11 1 -1 4.488302e-11 300.0216 -166.7238)"
+                                class="st0" width="38.7" height="5.8"></rect>
+                        </g>
+                        <g>
+                            <g class="st15">
+                                <path class="st0" d="M281.6,825v47.9H272l-9.6-23v23h-9.6V825h9.6l9.6,23v-23H281.6z">
+                                </path>
+                                <path class="st0" d="M310.3,825c2.6,0,4.9,0.9,6.7,2.7c1.8,1.8,2.8,4.1,2.9,6.8v38.3h-9.6v-9.6h-9.6v9.6h-9.6v-38.3
+                c0.1-2.7,1-5,2.9-6.8c1.8-1.8,4.1-2.7,6.7-2.7H310.3z M310.3,853.7v-19.1h-9.6v19.1H310.3z">
+                                </path>
+                                <path class="st0"
+                                    d="M362.8,825h14.6v47.9h-9.6v-31.2l-9.3,31.2h-10l-9.3-31.2v31.2h-9.6V825h14.6l9.4,31.2L362.8,825z">
+                                </path>
+                                <path class="st0"
+                                    d="M415.7,834.5h-19.1v9.6h9.6v9.6h-9.6v9.6h19.1v9.6H387V825h28.7V834.5z">
+                                </path>
+                                <path class="st0"
+                                    d="M434.9,844.2h-9.6v-9.6h9.6V844.2z M434.9,872.9h-9.6v-9.6h9.6V872.9z">
+                                </path>
+                            </g>
+                        </g>
+                        <g>
+                            <g class="st15">
+                                <path class="st0"
+                                    d="M272,907.8c2.6,0,4.9,0.9,6.7,2.7c1.8,1.8,2.8,4.1,2.9,6.8v9.6c0,1.9-0.5,3.5-1.4,5
+                c-0.9,1.5-2.1,2.6-3.6,3.4l5.1,20.3H272l-4.8-19.2h-4.8v19.2h-9.6v-47.9H272z M272,926.9v-9.6h-9.6v9.6H272z">
+                                </path>
+                                <path class="st0" d="M319.9,946.1c-0.1,2.7-1,5-2.9,6.8s-4.1,2.8-6.7,2.8h-9.6c-2.6,0-4.9-0.9-6.7-2.8c-1.8-1.8-2.8-4.1-2.9-6.8
+                v-28.8c0.1-2.7,1-5,2.9-6.8c1.8-1.8,4.1-2.7,6.7-2.7h9.6c2.6,0,4.9,0.9,6.7,2.7c1.8,1.8,2.8,4.1,2.9,6.8V946.1z M310.3,946.1
+                v-28.8h-9.6v28.8H310.3z"></path>
+                                <path class="st0" d="M339,946.1h19.1v9.6h-28.7v-47.9h9.6V946.1z"></path>
+                                <path class="st0"
+                                    d="M396.5,917.4h-19.1v9.6h9.6v9.6h-9.6v9.6h19.1v9.6h-28.7v-47.9h28.7V917.4z">
+                                </path>
+                                <path class="st0" d="M415.6,927h-9.6v-9.6h9.6V927z M415.6,955.7h-9.6v-9.6h9.6V955.7z">
+                                </path>
+                            </g>
+                        </g>
+                        <path class="st0"
+                            d="M303.7,1046.6h835.8c31.7,0,57.4,25.7,57.4,57.3h0c0,31.7-25.7,57.3-57.4,57.3H303.7c-31.7,0-57.4-25.7-57.4-57.3h0c0-31.7,25.7-57.3,57.4-57.3Z">
+                        </path>
+                        <g>
+                            <path class="st9"
+                                d="M326.1,1108c-.5,4.5-2.1,8.5-4.6,11.9-2.6,3.4-6,6-10.2,7.9s-9.1,2.8-14.4,2.8-10.9-1.1-15.4-3.2c-4.4-2.2-7.9-5.2-10.3-9.1s-3.6-8.4-3.6-13.6,1.2-9.7,3.6-13.6,5.9-6.9,10.3-9.1,9.6-3.2,15.4-3.2,10.2.9,14.4,2.8c4.2,1.9,7.7,4.5,10.2,7.9,2.6,3.4,4.1,7.4,4.6,11.9h-17.1c-.6-2.6-1.9-4.6-4-6s-4.8-2.1-8.2-2.1-4.7.5-6.5,1.4-3.2,2.2-4.2,3.9c-1,1.7-1.4,3.7-1.4,6.1s.5,4.4,1.4,6.1c1,1.7,2.4,3,4.2,3.9s4,1.4,6.5,1.4,6.2-.7,8.3-2c2.1-1.3,3.4-3.4,4-6.1h17.1,0Z">
+                            </path>
+                            <path class="st9"
+                                d="M405.6,1114.4h8.4v24.8h-15.9v-9.8h-37.3v9.8h-15.9v-24.8h6.5c1.5-2,2.6-4.6,3.4-7.8.7-3.2,1.1-7.1,1.1-11.7s-.4-9-1.1-15h50.8v34.4h0ZM371.4,1094.8v3.8c0,7-1,12.4-3,16h20.1v-19.8h-17.2.1Z">
+                            </path>
+                            <path class="st9"
+                                d="M458.2,1096.7v-16.7h17v49.4h-17v-17.7h-21.1v17.7h-17v-49.4h17v16.7h21.1Z"></path>
+                            <path class="st9"
+                                d="M500.6,1110.6l-.9,5.4h29.8v13.4h-47.8l3.6-24.7-3.6-24.7h47.5v13.4h-29.5l.9,5.4h26.5v11.7h-26.5,0ZM489.2,1075.3c-1.5-1.3-2.3-3.1-2.3-5.4s.8-3.9,2.3-5.2c1.5-1.3,3.7-1.9,6.3-1.9s4.8.6,6.3,1.9,2.3,3,2.3,5.2-.8,4.1-2.3,5.4-3.7,1.9-6.3,1.9-4.8-.6-6.3-1.9ZM510.3,1075.3c-1.5-1.3-2.3-3.1-2.3-5.4s.8-3.9,2.3-5.2c1.5-1.3,3.6-1.9,6.3-1.9s4.8.6,6.3,1.9,2.3,3,2.3,5.2-.8,4.1-2.3,5.4-3.7,1.9-6.3,1.9-4.8-.6-6.3-1.9Z">
+                            </path>
+                            <path class="st9"
+                                d="M574.6,1112.2l11.7-32.2h26.3v49.4h-16.1v-34.7l-13.5,34.7h-16.8l-13.5-34.5v34.5h-16.1v-49.4h26.3l11.8,32.2h-.1Z">
+                            </path>
+                            <path class="st9"
+                                d="M664.8,1080c4.4,0,8.2.7,11.4,2.2s5.6,3.6,7.3,6.3,2.5,5.9,2.5,9.5-.8,6.8-2.5,9.5-4.1,4.8-7.3,6.3-7,2.2-11.4,2.2h-11.8v13.4h-17v-49.4h28.8ZM663.7,1102.7c1.7,0,3-.4,3.9-1.2.9-.8,1.4-2,1.4-3.5s-.5-2.7-1.4-3.5-2.2-1.2-3.9-1.2h-10.7v9.5h10.7Z">
+                            </path>
+                            <path class="st9"
+                                d="M703.6,1127.4c-4.5-2.2-8.1-5.2-10.6-9.1s-3.7-8.4-3.7-13.6,1.2-9.7,3.7-13.6,6-6.9,10.6-9.1c4.5-2.2,9.8-3.2,15.7-3.2s11.2,1.1,15.7,3.2c4.5,2.2,8.1,5.2,10.6,9.1s3.7,8.4,3.7,13.6-1.2,9.7-3.7,13.6-6,6.9-10.6,9.1c-4.5,2.2-9.8,3.2-15.7,3.2s-11.2-1.1-15.7-3.2ZM726.3,1114.2c1.9-.9,3.4-2.1,4.5-3.7,1-1.6,1.5-3.5,1.5-5.7s-.5-4.1-1.5-5.7-2.5-2.8-4.5-3.7-4.2-1.3-6.9-1.3-5,.4-6.9,1.3-3.4,2.1-4.5,3.7c-1,1.6-1.5,3.5-1.5,5.7s.5,4.1,1.5,5.7,2.5,2.8,4.5,3.7c1.9.9,4.2,1.3,6.9,1.3s5-.4,6.9-1.3Z">
+                            </path>
+                            <path class="st9"
+                                d="M824,1100.5l17.2,28.9h-19.2l-8.7-15.7-12.7,15.7h-12.5l-12.7-15.7-8.7,15.7h-19.2l17.2-28.9-16.6-20.5h17.8l20.2,26.4v-26.4h16.7v26.4l20.2-26.4h17.8l-16.6,20.5h-.2Z">
+                            </path>
+                            <path class="st9"
+                                d="M903.1,1114.4h8.4v24.8h-15.9v-9.8h-37.3v9.8h-15.9v-24.8h6.5c1.5-2,2.6-4.6,3.4-7.8.7-3.2,1.1-7.1,1.1-11.7s-.4-9-1.1-15h50.8v34.4h0ZM869,1094.8v3.8c0,7-1,12.4-3,16h20.1v-19.8h-17.2.1Z">
+                            </path>
+                            <path class="st9"
+                                d="M935.2,1110.6l-.9,5.4h29.8v13.4h-47.8l3.6-24.7-3.6-24.7h47.5v13.4h-29.5l.9,5.4h26.5v11.7h-26.5Z">
+                            </path>
+                            <path class="st9"
+                                d="M1009.2,1096.7v-16.7h17v49.4h-17v-17.7h-21.1v17.7h-17v-49.4h17v16.7h21.1Z"></path>
+                            <path class="st9"
+                                d="M1050.9,1112l19.4-31.9h22.2v49.4h-16.9v-33l-20,33h-21.5v-49.4h16.9v31.9h0Z"></path>
+                            <path class="st9"
+                                d="M1150.7,1080v49.4h-17v-16.5h-5.5l-11,16.5h-19.4l12.6-18.1c-3.5-1.1-6.3-3-8.2-5.5-2-2.6-3-5.6-3-9.2s.8-6.2,2.5-8.7c1.7-2.5,4-4.4,6.9-5.8s6.4-2.1,10.3-2.1h31.8ZM1133.7,1101.2v-9.2h-12.1c-1.7,0-3,.4-3.9,1.2s-1.4,1.9-1.4,3.4.5,2.6,1.4,3.4,2.2,1.2,3.9,1.2h12.1Z">
+                            </path>
+                            <path class="st9"
+                                d="M1161.6,1129.2c-1.4-.7-2.4-1.6-3.1-2.9-.7-1.3-1.1-2.7-1.1-4.3s.4-3.1,1.1-4.3c.7-1.3,1.8-2.2,3.1-2.9,1.3-.7,2.9-1,4.7-1s3.3.3,4.7,1c1.4.7,2.4,1.6,3.1,2.9.7,1.3,1.1,2.7,1.1,4.3s-.4,3.1-1.1,4.3c-.7,1.3-1.8,2.2-3.1,2.9s-2.9,1-4.7,1-3.3-.3-4.7-1ZM1160.3,1110.3l-2.8-30.3h17.5l-2.8,30.3h-11.9,0Z">
+                            </path>
+                        </g>
+                        <circle class="st0" cx="1229.2" cy="824.9" r="70"></circle>
+                    </g>
+                    <g id="Изменяемая_часть" class="st10">
+                        <g class="st11">
+                            <rect x="1033.9" y="611" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1059.5" y="636.7" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1085.2" y="662.3" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1085.2" y="611" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1033.9" y="662.3" class="st0" width="25.6" height="25.6"></rect>
+
+                            <rect x="1136.4" y="611"
+                                transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2298.3914 1247.7014)" class="st0"
+                                width="25.6" height="25.6"></rect>
+
+                            <rect x="1110.8" y="636.7"
+                                transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2247.1643 1298.9285)" class="st0"
+                                width="25.6" height="25.6"></rect>
+                            <rect x="1033.9" y="713.5" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1059.5" y="687.9" class="st0" width="25.6" height="25.6"></rect>
+                            <rect x="1085.2" y="713.5" class="st0" width="25.6" height="25.6"></rect>
+
+                            <rect x="1136.4" y="713.5"
+                                transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2298.3914 1452.6095)" class="st0"
+                                width="25.6" height="25.6"></rect>
+
+                            <rect x="1110.8" y="687.9"
+                                transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2247.1643 1401.3824)" class="st0"
+                                width="25.6" height="25.6"></rect>
+
+                            <rect x="1136.4" y="662.3"
+                                transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2298.3914 1350.1554)" class="st0"
+                                width="25.6" height="25.6"></rect>
+                        </g>
+                        <text class="cls-10" transform="translate(1062 244.5) rotate(90)">
+                            <tspan x="25" y="0">date</tspan>
+                        </text>
+                        <g class="st11">
+                            <rect x="1062.4" y="179.2" class="st0" width="21.8" height="21.8"></rect>
+                            <rect x="1111.4" y="179.2" class="st0" width="21.8" height="21.8"></rect>
+                            <rect x="1062.4" y="130.2" class="st0" width="21.8" height="21.8"></rect>
+                            <rect x="1111.4" y="130.2" class="st0" width="21.8" height="21.8"></rect>
+                            <rect x="1080.9" y="102.1" class="st0" width="3.3" height="21.8"></rect>
+                            <rect x="1111.4" y="102.1" class="st0" width="3.3" height="21.8"></rect>
+
+                            <rect x="1149.5" y="139.5"
+                                transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 1301.526 -1000.6891)" class="st0"
+                                width="3.3" height="21.8"></rect>
+
+                            <rect x="1149.5" y="170"
+                                transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 1332.0317 -970.1835)" class="st0"
+                                width="3.3" height="21.8"></rect>
+
+                            <rect x="1043.2" y="139.5"
+                                transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 1195.2483 -894.4114)" class="st0"
+                                width="3.3" height="21.8"></rect>
+
+                            <rect x="1043.2" y="170"
+                                transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 1225.7539 -863.9058)" class="st0"
+                                width="3.3" height="21.8"></rect>
+                            <rect x="1080.9" y="208" class="st0" width="3.3" height="21.8"></rect>
+                            <rect x="1111.4" y="208" class="st0" width="3.3" height="21.8"></rect>
+                        </g>
+                        <text transform="matrix(0 1 -1 0 1059.9843 241.8568)" class="st16 st17 st18">date</text>
+                        <text transform="matrix(1 0 0 1 262.2986 962.5225)" class="st16 st19 st20">Роль</text>
+
+
+
+
+
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Правая панель редактора текста -->
+        <div class="text-editor">
+            <h3>Редактор текста</h3>
+
+            <div class="editor-group">
+                <strong>Роль:</strong>
+                <textarea id="roleEditor" placeholder="Введите текст роли..." rows="4"></textarea>
+                <button onclick="resetRoleText()" style="background: #666; color: white;">
+                    Сбросить к исходному
+                </button>
+            </div>
+
+            <div class="editor-group">
+                <strong>Имя:</strong>
+                <input type="text" id="nameEditor" placeholder='Например "Зарипов Ринат"...'>
+                <button onclick="applyNameText()" style="background: #E78E2E; color: white;">
+                    Применить
+                </button>
+            </div>
+
+            <div class="editor-group">
+                <button onclick="downloadAsPNG()" style="background: #fe5900; color: white;">
+                    Скачать PNG
+                </button>
+            </div>
+
+            <!-- Шуточный блок с рекламой -->
+            <div class="advertisement-block">
+
+                Здесь могла быть<br>ваша реклама
+                <div class="advertisement-svg">
+                    <svg width="1000px" height="81000px" viewBox="0 0 960 960" version="1.1" xml:space="preserve"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+                        <style type="text/css">
+                            
+                        </style>
+
+                        <g class="st0" id="guide" />
+
+                        <g class="st0" id="sketch" />
+
+                        <g class="st0" id="stroke">
+
+                            <path class="st2" d="M293.9,473.8c-17.9,36.4-43.7,130-36.5,195.4" />
+
+                            <path class="st2"
+                                d="M382.8,275.9c11.6,4.8,14.2,23,4.6,30.9c-9.7,7.9-27,1.7-29.4-10.5s11.2-24.6,23.1-21" />
+
+                            <path class="st2"
+                                d="M325.2,668.6c-35.8-1-60.2,1.6-96.5,0.4c0-29.2-16.5-40.3-35.4-42.2s-36.7,11.5-45.5,28.3   c-8.8,16.8-9.3,37.4-9.8,56.4c-0.5,18.3,4.5,62.5,12.1,79.1c20.5,44.4,68.6,22.6,93.1,22.2c107.5-2,407.5-16.4,570.1-9.1   c69.3,3.1,57.4-35.6,10.9-54.1c-30-11.9-88.7-42.2-109.6-65.9c-28-31.7-119-217.4-126.3-271.3c-7.2-53.9-14.2-115.9-52.5-154.5   c-42.4-42.6-76.9-54.7-136.9-57.8c-56.3-2.9-115.3,6.1-161.9,37.8s-78.2,89.4-67.7,144.8s74.1,86.4,124.8,91" />
+
+                            <path class="st2"
+                                d="M396.8,487.3c-7.7,12.7-20.9,21.1-32.9,30.1s-23.8,20.2-26.4,34.8c-3.4,19,11.2,38.3,29.9,44.2   c18.7,5.9,39.8,0.4,56-10.5c16.2-11,28.3-26.8,38.9-43.1" />
+
+                            <path class="st2"
+                                d="M256.7,226.1C256.7,226.1,256.7,226.1,256.7,226.1c2.6-18.2,6.7-36.2,12-53.8c4.1-13.4,11.4-28.6,25.2-30.6   c7.6-1.1,15.3,2.5,20.9,7.7c5.7,5.2,9.6,11.9,13.5,18.6c6.5,11,12.9,22.1,19.4,33.1" />
+
+                            <path class="st2"
+                                d="M429.1,202.8c9.8-16.7,23.5-31.3,39.8-41.9c7.4-4.8,16.6-8.9,24.7-5.4c9,4,11.8,15.3,12.9,25.1   c2,17.4,2.3,35.1,1,52.6" />
+
+                            <path class="st2"
+                                d="M552.5,279.1c16.2-5.5,33-8.9,50-10.3c11.3-0.9,24.5,0,31,9.2c7.2,10.2,1.9,24.3-4.6,35   c-12.3,20.3-28.5,38.2-47.4,52.6" />
+
+                            <path class="st2"
+                                d="M590,422c13.9-0.9,27.8-1.7,41.7-2.6c8.3-0.5,16.8-1,24.8,1.4c8,2.4,15.4,8.4,17.1,16.6   c2.1,10.4-5.3,20.1-12.2,28.2c-12.9,15-25.8,30-38.7,45" />
+
+                            <path class="st2"
+                                d="M654.3,578.6c12.3-3.5,24.8-6,37.5-7.3c12-1.2,26.4-0.2,32.4,10.2c6.1,10.6-0.7,23.7-7.4,34   c-7.9,12.1-15.7,24.2-23.6,36.3" />
+
+                            <path class="st2"
+                                d="M742.6,706.7c5.6-3.4,11.1-6.9,16.7-10.3c9.2-5.7,20-11.5,30.1-8.1c10.7,3.6,15.6,15.9,17.2,27.1   c1.3,8.8,1.2,17.8,0,26.7" />
+
+                        </g>
+
+                        <g id="outline">
+
+                            <path
+                                d="M367.5,316.2c3.2,1.1,6.4,1.7,9.5,1.7c5.6,0,10.9-1.8,15.2-5.3c6.6-5.4,9.7-14.2,8.3-23.5c-1.4-9.3-6.9-16.8-14.8-20.1   c-0.4-0.2-2-0.7-2.4-0.9c-8.2-2.5-17.2-0.2-24.2,6.1c-7,6.3-10.2,15.1-8.5,23.5S358.6,313,367.5,316.2z M369.2,285.4   c1.9-1.7,4.7-3.2,7.5-3.2c1.6,0,2.8,0.5,3.2,0.7c3.7,1.8,5.2,5.3,5.7,8.4c0.5,3.1-0.1,7.3-3,9.7c-2.9,2.4-7.2,2.1-10.1,1   c-3-1.1-6.4-3.5-7.2-7.2C364.6,291.1,366.9,287.5,369.2,285.4z M826.9,742.6c-3.8-1.5-7.9-3.2-12.1-5.1c0.7-7.8,0.5-15.6-0.6-23.2   c-2.5-17.1-10.6-29.1-22.2-33.1c-14.4-4.9-28.8,4-36.5,8.8c-4,2.5-8.1,5-12.1,7.5l-0.5,0.3c-9.5-6.6-17.5-13.1-22.7-19.1   c-4.4-5-10.7-14.3-18-26.6l21.1-32.4c7.8-12,15.7-27.7,7.6-41.8c-4.4-7.8-14.9-16.5-39.7-14c-11,1.1-22,3.1-32.8,5.9   c-9.3-19-18.5-38.7-26.9-57.8c11.5-13.3,22.9-26.6,34.4-39.9l1.3-1.6c5.9-6.9,16.9-19.6,13.9-34.6c-2.1-10.2-10.6-18.7-22.2-22.3   c-9.4-2.9-19-2.3-27.5-1.7c-11.7,0.7-23.5,1.4-35.2,2.2c-0.2-0.9-0.3-1.9-0.4-2.7l-0.8-6.1c-1.6-11.9-3.2-24.2-5.2-36.4   c18.3-14.5,33.6-32,45.7-51.9c10.5-17.3,12-32.2,4.3-43.2c-6.9-9.8-19.3-13.9-37.7-12.4c-15.7,1.3-31.3,4.3-46.3,8.9   c-4.3-6.3-9.1-12.2-14.6-17.7c-8.8-8.9-17.3-16.4-25.7-22.9c1-16.7,0.6-33.4-1.3-49.9c-0.7-6.1-2.8-24.7-17.4-31.1   c-9-3.9-19.7-1.9-31.8,6c-15.7,10.2-29.3,24-39.5,40.1c-8-0.9-16.7-1.6-26.2-2.1c-16.3-0.8-32.1-0.6-47.2,0.5l-4.4-7.5   c-4.2-7.2-8.4-14.3-12.6-21.5c-3.9-6.7-8.4-14.3-14.9-20.3c-8-7.4-17.9-10.9-27.1-9.6c-14.2,2-24.7,14.1-31.3,35.8   c-5.1,16.7-9,33.9-11.7,51.2c-6,3.2-11.7,6.7-17.2,10.4c-24.4,16.6-45,40.2-57.8,66.4c-13.8,28.3-18.3,58-13,86   c10.2,53.5,66.9,87.6,121.1,95.8c-18,42.1-37.7,121.9-33.6,181.8c-4.3,0-8.8,0-13.5-0.1c-2.4-24.6-17.3-39.9-41.8-42.3   c-17-1.7-39.9,7.7-52.8,32.3c-9.5,18-10.1,39.7-10.7,58.8l0,0.9c-0.5,18.1,4.4,64.3,12.8,82.5c12,26,32.4,32.2,52.2,32.2   c10.6,0,21.1-1.8,30-3.3c6.7-1.2,13-2.3,17.8-2.3c28.2-0.5,69.9-1.9,118.3-3.5c140-4.6,331.7-11,451.3-5.6   c19.1,0.9,51.7-0.9,56.2-22C872.7,772.8,855.7,754.1,826.9,742.6z M763.2,702.8c7.8-4.8,16.7-9.8,23.8-7.4c2.3,0.8,9.8,4.6,12.2,21   c0.7,4.7,0.9,9.4,0.8,14.2c-14.3-7-29.7-15.3-43.4-23.8C758.8,705.5,761,704.1,763.2,702.8z M692.7,578.8c7.6-0.8,20.9-1,25.1,6.5   c2,3.5,3.4,9.9-7.2,26.2l-16.9,26c-8.8-15.6-18.6-34.2-28.6-54C674.2,581.3,683.4,579.7,692.7,578.8z M632.2,426.9   c7.6-0.5,15.4-1,22.2,1.1c5.1,1.6,10.8,5.5,11.9,10.9c1.4,7.1-4.7,15-10.5,21.8l-1.3,1.6c-9.9,11.5-19.7,22.9-29.6,34.4   c-11.1-26-20.1-49.9-25.2-67.8C610.4,428.2,621.3,427.6,632.2,426.9z M603.1,276.3c12.5-1,20.7,1,24.2,6.1c5.3,7.6-0.8,20-4.9,26.8   c-9.6,15.8-21.9,30.4-36,42.7c-4.8-24-11.5-47.6-22.8-68.3C576.6,279.8,589.8,277.4,603.1,276.3z M473,167.3   c5.2-3.4,12.5-7,17.6-4.8c4.5,2,7.3,8.2,8.5,19.1c1.4,12.6,2,25.3,1.6,38c-7.8-4.9-15.8-8.9-24.1-12.3c-10.7-4.4-22-7.6-34.9-10   C450.3,185.4,460.9,175.1,473,167.3z M275.9,174.5c4.8-15.7,11.2-24.2,19.1-25.4c4.6-0.7,10.2,1.5,14.8,5.8   c4.9,4.5,8.6,10.8,12.1,16.8c4.2,7.2,8.4,14.3,12.6,21.5l1,1.7c-25.1,3.3-48.3,9.4-69.1,18.4C268.8,200.2,272,187.2,275.9,174.5z    M854.5,786c-0.9,4.4-10.6,11.5-40.9,10.1c-120.3-5.4-312.3,1-452.5,5.6c-48.3,1.6-89.9,3-118,3.5c-5.9,0.1-12.8,1.3-20.1,2.6   c-29.7,5.1-53.4,6.9-66-20.4c-6.8-14.8-12-57.7-11.4-75.8l0-0.9c0.5-18.3,1.1-37.2,8.9-52.2c6.8-12.9,21.6-26,38.1-24.3   c19,1.9,28.6,13.5,28.6,34.7c0,4,3.2,7.4,7.3,7.5c18.7,0.6,34.4,0.2,49.6-0.2c14.5-0.4,29.5-0.7,46.9-0.2c0.1,0,0.1,0,0.2,0   c4,0,7.4-3.2,7.5-7.3c0.1-4.1-3.1-7.6-7.3-7.7c-17.8-0.5-33-0.1-47.7,0.2c-4.4,0.1-8.9,0.2-13.4,0.3   c-4.6-64.2,20.3-151.9,36.4-184.5c3.5-6.2,2-10.1-6.1-10.8c-25.9-2.4-52.9-11.6-74.1-25.3c-17-11-38.5-30.3-44-59.7   c-4.7-24.8-0.7-51.3,11.7-76.6c11.7-23.9,30.5-45.5,52.8-60.6c40-27.1,94.4-39.7,157.3-36.5c11,0.6,20.7,1.4,29.6,2.6   c0.1,0,0.2,0,0.3,0c16.6,2.3,30.2,5.8,42.7,10.9c11,4.5,21.4,10.3,31.9,18c0.1,0,0.1,0.1,0.2,0.1c8.9,6.5,17.9,14.4,27.3,23.9   c35.1,35.3,42.8,93.1,49.6,144l0.8,6.1c0.4,3.1,1.1,6.5,2,10.3c0,0.1,0,0.2,0.1,0.3c12.4,52.8,68,169.9,103.6,230.8   c0.2,0.6,0.6,1.1,1,1.7c8.7,14.9,16.2,26.2,21.5,32.1c6.8,7.7,17.2,16,29.3,24.1c0.2,0.1,0.4,0.3,0.6,0.4   c26.3,17.6,60.4,34.6,82.6,43.4C846.1,766.4,855.8,780,854.5,786z M468.7,546.9c-10.1,15.5-22.8,32.9-41,45.2   c-13.8,9.3-29.4,14.2-44.1,14.2c-6.4,0-12.6-0.9-18.4-2.8c-23.3-7.4-39-31-35.1-52.7c3.2-17.8,17.3-30.5,29.3-39.5   c1.9-1.4,3.8-2.9,5.8-4.3c10-7.4,19.5-14.3,25.2-23.7c2.2-3.5,6.8-4.7,10.3-2.5s4.7,6.8,2.5,10.3c-7.3,12-18.4,20.2-29.2,28.1   c-1.9,1.4-3.8,2.8-5.6,4.2c-9.7,7.4-21.2,17.4-23.5,30.2c-2.6,14.3,8.8,30.7,24.8,35.7c15.1,4.8,33.6,1.2,49.6-9.6   c16-10.8,27.6-26.8,36.8-41c2.3-3.5,6.9-4.5,10.4-2.2C470,538.8,470.9,543.5,468.7,546.9z" />
+
+                        </g>
+
+                        <g class="st0" id="flat">
+
+                            <g class="st3">
+
+                                <g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M316.3,148.2c-5.6-5.2-13.3-8.8-20.9-7.8c-13.9,1.9-21.2,17.1-25.4,30.5             c-5.5,17.6-9.6,36.4-12.3,54.6c0,0.7,91.8-24.7,91.8-24.7c-6.4-11.1-13.4-22.9-19.8-34             C325.9,160.2,322,153.5,316.3,148.2z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M495,155.4c-8-3.5-17.3,0.5-24.7,5.3c-16.3,10.5-30.7,25.5-40.6,42.2l78.9,30.2             c1.4-17.5,1.2-35.1-0.7-52.6C506.8,170.7,504.1,159.4,495,155.4z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M629.6,313.5c6.5-10.6,11.9-24.7,4.8-35c-6.5-9.3-19.7-10.2-30.9-9.4c-17,1.3-34.7,4.7-50.9,10.1             l29,87.1C600.6,352.1,617.1,333.7,629.6,313.5z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M673.6,438.2c-1.6-8.2-9-14.2-17-16.7c-8-2.5-16.5-2-24.8-1.6c-13.9,0.8-27.8,1.6-41.7,2.4             c-2.4,34.3,11.3,62.9,32.2,88.8c13-14.9,26-29.8,38.9-44.8C668.2,458.3,675.7,448.6,673.6,438.2z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M691.2,572.1c-12.7,1.2-25.3,3.6-37.6,7.1l38.6,73.5c7.9-12.1,15.8-24.1,23.8-36.2             c6.7-10.2,13.6-23.3,7.6-34C717.7,572.1,703.2,571,691.2,572.1z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <g>
+
+                                                                    <path class="st8"
+                                                                        d="M805.3,716.8c-1.6-11.2-6.4-23.5-17.1-27.2c-10.2-3.5-21,2.3-30.2,7.9c-5.6,3.4-11.2,6.8-16.7,10.2             l63.9,35.7C806.4,734.6,806.5,725.6,805.3,716.8z" />
+
+                                                                </g>
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                </g>
+
+                                <g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <path class="st11"
+                                                                    d="M228.6,669c0-29.2-16.5-40.3-35.4-42.2s-36.7,11.5-45.5,28.3c-8.8,16.8-9.3,37.4-9.8,56.4            c-0.5,18.3,4.5,62.5,12.1,79.1c20.5,44.4,68.6,22.6,93.1,22.2c107.5-2,407.5-16.4,570.1-9.1c69.3,3.1,57.4-35.6,10.9-54.1            c-30-11.9-88.7-42.2-109.6-65.9c-28-31.7-119-217.4-126.3-271.3c-7.2-53.9-14.2-115.9-52.5-154.5            c-42.4-42.6-76.9-54.7-136.9-57.8c-56.3-2.9-115.3,6.1-161.9,37.8s-78.2,89.4-67.7,144.8s74.1,86.4,124.8,91            c-17.9,36.4-43.7,130-36.5,195.4L228.6,669z" />
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                </g>
+
+                                <g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <path class="st7"
+                                                                    d="M382.8,275.9l-1.7-0.6c-12-3.6-25.6,8.7-23.1,21c2.4,12.3,19.7,18.5,29.4,10.5            C397.1,298.9,394.4,280.7,382.8,275.9z" />
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                </g>
+
+                                <g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <path class="st7"
+                                                                    d="M383.6,606.3c-6.4,0-12.6-0.9-18.4-2.8c-23.3-7.4-39-31-35.1-52.7c3.2-17.8,17.3-30.5,29.3-39.5            c1.9-1.4,3.8-2.9,5.8-4.3c10-7.4,19.5-14.3,25.2-23.7c2.2-3.5,6.8-4.7,10.3-2.5s4.7,6.8,2.5,10.3            c-7.3,12-18.4,20.2-29.2,28.1c-1.9,1.4-3.8,2.8-5.6,4.2c-9.7,7.4-21.2,17.4-23.5,30.2c-2.6,14.3,8.8,30.7,24.8,35.7            c15.1,4.8,33.6,1.2,49.6-9.6c16-10.8,27.6-26.8,36.8-41c2.3-3.5,6.9-4.5,10.4-2.2c3.5,2.3,4.5,6.9,2.2,10.4            c-10.1,15.5-22.8,32.9-41,45.2C413.9,601.5,398.3,606.3,383.6,606.3z" />
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                </g>
+
+                                <g>
+
+                                    <g>
+
+                                        <g>
+
+                                            <g>
+
+                                                <g>
+
+                                                    <g>
+
+                                                        <g>
+
+                                                            <g>
+
+                                                                <path class="st7"
+                                                                    d="M257.4,676.7c-4.1,0-7.4-3.3-7.5-7.4c-0.1-4.1,3.3-7.5,7.4-7.6c6.8-0.1,13-0.2,19-0.3            c14.4-0.3,28.1-0.6,49-0.3c4.1,0.1,7.5,3.5,7.4,7.6c-0.1,4.1-3.4,7.4-7.5,7.4c0,0-0.1,0-0.1,0c-20.7-0.3-34.2,0-48.5,0.3            C270.6,676.5,264.4,676.6,257.4,676.7C257.5,676.7,257.4,676.7,257.4,676.7z" />
+
+                                                            </g>
+
+                                                        </g>
+
+                                                    </g>
+
+                                                </g>
+
+                                            </g>
+
+                                        </g>
+
+                                    </g>
+
+                                </g>
+
+                            </g>
+
+                        </g>
+
+                        <g class="st0" id="colored_x5F_line">
+
+                            <g class="st3">
+
+                                <g>
+
+                                    <path class="st8"
+                                        d="M228.6,669c0-29.2-16.5-40.3-35.4-42.2s-36.7,11.5-45.5,28.3c-8.8,16.8-9.3,37.4-9.8,56.4     c-0.5,18.3,4.5,62.5,12.1,79.1c20.5,44.4,68.6,22.6,93.1,22.2c107.5-2,407.5-16.4,570.1-9.1c69.3,3.1,57.4-35.6,10.9-54.1     c-30-11.9-88.7-42.2-109.6-65.9c-28-31.7-119-217.4-126.3-271.3c-7.2-53.9-14.2-115.9-52.5-154.5     c-42.4-42.6-76.9-54.7-136.9-57.8c-56.3-2.9-115.3,6.1-161.9,37.8s-78.2,89.4-67.7,144.8s74.1,86.4,124.8,91     c-17.9,36.4-43.7,130-36.5,195.4L228.6,669z" />
+
+                                </g>
+
+                            </g>
+
+                            <g class="st3">
+
+                                <g>
+
+                                    <path class="st16"
+                                        d="M382.8,275.9l-1.7-0.6c-12-3.6-25.6,8.7-23.1,21c2.4,12.3,19.7,18.5,29.4,10.5     C397.1,298.9,394.4,280.7,382.8,275.9z" />
+
+                                </g>
+
+                            </g>
+
+                            <g class="st3">
+
+                                <g>
+
+                                    <path class="st16"
+                                        d="M383.6,606.3c-6.4,0-12.6-0.9-18.4-2.8c-23.3-7.4-39-31-35.1-52.7c3.2-17.8,17.3-30.5,29.3-39.5     c1.9-1.4,3.8-2.9,5.8-4.3c10-7.4,19.5-14.3,25.2-23.7c2.2-3.5,6.8-4.7,10.3-2.5s4.7,6.8,2.5,10.3c-7.3,12-18.4,20.2-29.2,28.1     c-1.9,1.4-3.8,2.8-5.6,4.2c-9.7,7.4-21.2,17.4-23.5,30.2c-2.6,14.3,8.8,30.7,24.8,35.7c15.1,4.8,33.6,1.2,49.6-9.6     c16-10.8,27.6-26.8,36.8-41c2.3-3.5,6.9-4.5,10.4-2.2c3.5,2.3,4.5,6.9,2.2,10.4c-10.1,15.5-22.8,32.9-41,45.2     C413.9,601.5,398.3,606.3,383.6,606.3z" />
+
+                                </g>
+
+                            </g>
+
+                            <g class="st3">
+
+                                <g>
+
+                                    <path class="st16"
+                                        d="M257.4,676.7c-4.1,0-7.4-3.3-7.5-7.4c-0.1-4.1,3.3-7.5,7.4-7.6c6.8-0.1,13-0.2,19-0.3     c14.4-0.3,28.1-0.6,49-0.3c4.1,0.1,7.5,3.5,7.4,7.6c-0.1,4.1-3.4,7.4-7.5,7.4c0,0-0.1,0-0.1,0c-20.7-0.3-34.2,0-48.5,0.3     C270.6,676.5,264.4,676.6,257.4,676.7C257.5,676.7,257.4,676.7,257.4,676.7z" />
+
+                                </g>
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M256.7,233.6c-4.1,0-7.5-3.4-7.5-7.5v0c0-0.4,0-0.7,0.1-1.1c2.7-18.5,6.8-37,12.3-54.9    c6.6-21.8,17.2-33.8,31.3-35.8c9.2-1.3,19.1,2.2,27.1,9.6c6.5,6,11,13.6,14.9,20.3c4.2,7.2,8.4,14.3,12.6,21.5l6.8,11.6    c2.1,3.6,0.9,8.2-2.7,10.3c-3.6,2.1-8.2,0.9-10.3-2.7l-6.8-11.6c-4.2-7.2-8.4-14.3-12.6-21.5c-3.6-6.1-7.2-12.3-12.1-16.8    c-4.6-4.3-10.2-6.4-14.8-5.8c-7.9,1.1-14.3,9.7-19.1,25.4c-5.2,17.2-9.2,34.9-11.8,52.6C263.6,230.8,260.5,233.6,256.7,233.6z" />
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M507.5,240.8c-0.2,0-0.4,0-0.6,0c-4.1-0.3-7.2-3.9-6.9-8c1.3-17.1,1-34.3-1-51.2c-1.2-10.9-4-17.1-8.5-19.1    c-5-2.2-12.4,1.4-17.6,4.8c-15.1,9.9-28.1,23.5-37.4,39.4c-2.1,3.6-6.7,4.8-10.3,2.7c-3.6-2.1-4.8-6.7-2.7-10.3    c10.5-17.9,25.1-33.2,42.2-44.3c12.1-7.9,22.8-9.9,31.8-6c14.6,6.4,16.7,25,17.4,31.1c2,17.8,2.4,36,1,54    C514.7,237.8,511.4,240.8,507.5,240.8z" />
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M581.5,373.1c-2.3,0-4.5-1-6-3c-2.5-3.3-1.9-8,1.4-10.5c18.1-13.7,33.8-31.2,45.6-50.5    c4.1-6.8,10.2-19.2,4.9-26.8c-3.5-5-11.7-7.1-24.2-6.1c-16.4,1.3-32.6,4.7-48.3,10c-3.9,1.3-8.2-0.8-9.5-4.7s0.8-8.2,4.7-9.5    c16.8-5.7,34.2-9.3,51.8-10.7c18.5-1.5,30.8,2.6,37.7,12.4c7.7,11,6.2,25.9-4.3,43.2c-12.9,21.2-29.5,39.6-49.3,54.7    C584.6,372.6,583.1,373.1,581.5,373.1z" />
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M622.7,518.1c-1.7,0-3.5-0.6-4.9-1.8c-3.1-2.7-3.5-7.4-0.8-10.6c12.5-14.5,24.9-28.9,37.4-43.4l1.3-1.6    c5.9-6.8,12-14.7,10.5-21.8c-1.1-5.4-6.8-9.4-11.9-10.9c-6.8-2.1-14.6-1.6-22.2-1.1c-13.9,0.8-27.8,1.7-41.7,2.6    c-4.2,0.2-7.7-2.9-7.9-7s2.9-7.7,7-7.9c13.9-0.9,27.8-1.7,41.7-2.6c8.5-0.5,18.1-1.1,27.5,1.7c11.6,3.5,20.1,12.1,22.2,22.3    c3,14.9-8,27.7-13.9,34.6l-1.3,1.6c-12.5,14.5-24.9,28.9-37.4,43.4C626.9,517.2,624.8,518.1,622.7,518.1z" />
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M693.3,659.4c-1.4,0-2.8-0.4-4.1-1.2c-3.5-2.3-4.5-6.9-2.2-10.4l23.6-36.3c10.6-16.3,9.2-22.8,7.2-26.2    c-4.3-7.5-17.6-7.3-25.1-6.5c-12.2,1.3-24.4,3.6-36.2,7c-4,1.1-8.1-1.2-9.3-5.1c-1.1-4,1.2-8.1,5.1-9.3    c12.7-3.6,25.8-6.2,38.8-7.5c24.8-2.6,35.2,6.2,39.7,14c8.1,14.2,0.2,29.8-7.6,41.8L699.6,656    C698.2,658.2,695.8,659.4,693.3,659.4z" />
+
+                            </g>
+
+                            <g class="st3">
+
+                                <path class="st16"
+                                    d="M806.7,749.5c-0.4,0-0.7,0-1.1-0.1c-4.1-0.6-7-4.4-6.4-8.5c1.2-8.2,1.2-16.5,0-24.5    c-2.4-16.5-10-20.3-12.2-21c-7.1-2.4-16,2.5-23.8,7.4c-4,2.5-8,5-12.1,7.5l-4.6,2.9c-3.5,2.2-8.1,1.1-10.3-2.4    c-2.2-3.5-1.1-8.1,2.4-10.3l4.6-2.9c4-2.5,8.1-5,12.1-7.5c7.7-4.8,22.1-13.7,36.5-8.8c11.7,4,19.8,16,22.2,33.1    c1.4,9.4,1.4,19.1,0,28.8C813.5,746.8,810.3,749.5,806.7,749.5z" />
+
+                            </g>
+
+                        </g>
+
+                    </svg>
+
+
+
+                </div>
+
+            </div>
+
+            <script>
+                // Переменные для хранения текущих значений
+                let currentX = 0;
+                let currentY = 0;
+                let currentScale = 1;
+
+                // Переменные для управления мышкой
+                let isDragging = false;
+                let lastMouseX = 0;
+                let lastMouseY = 0;
+
+                // Пределы перемещения
+                const MAX_X = 150;
+                const MAX_Y = 150;
+
+                function loadPhoto() {
+                    // Создаем input для выбора папки
+                    const folderInput = document.createElement('input');
+                    folderInput.type = 'file';
+                    folderInput.webkitdirectory = true;
+                    folderInput.multiple = true;
+
+                    folderInput.onchange = function (e) {
+                        const files = e.target.files;
+                        const photo = document.getElementById('userPhoto');
+
+                        // Ищем файлы
+                        let imageFile = null;
+                        let svg1File = null;
+                        let svg2File = null;
+
+                        console.log('Все файлы в папке:');
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            console.log(`Файл ${i}: ${file.name}, тип: ${file.type}`);
+
+                            if (file.type.startsWith('image/')) {
+                                imageFile = file;
+                                console.log('Найдено основное изображение:', file.name);
+                            }
+                            // Ищем по точным именам файлов
+                            else if (file.name === '1.svg' || file.name.toLowerCase() === '1.svg') {
+                                svg1File = file;
+                                console.log('Найден SVG 1:', file.name);
+                            }
+                            else if (file.name === '2.svg' || file.name.toLowerCase() === '2.svg') {
+                                svg2File = file;
+                                console.log('Найден SVG 2:', file.name);
+                            }
+                            // Дополнительная проверка по расширению
+                            else if (file.name.toLowerCase().endsWith('.svg')) {
+                                if (file.name.toLowerCase().includes('1.') && !svg1File) {
+                                    svg1File = file;
+                                    console.log('Найден SVG 1 по расширению:', file.name);
+                                }
+                                else if (file.name.toLowerCase().includes('2.') && !svg2File) {
+                                    svg2File = file;
+                                    console.log('Найден SVG 2 по расширению:', file.name);
+                                }
+                            }
+                        }
+
+                        // Загружаем основное фото
+                        if (imageFile) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                photo.setAttribute('href', e.target.result);
+                                setupMouseControls();
+                                resetPosition();
+                                extractNameFromFilename(imageFile.name);
+
+                                // Инициализируем роль если она пустая
+                                setTimeout(() => {
+                                    const roleElement = document.getElementById('roleText');
+                                    if (roleElement && !roleElement.textContent.trim()) {
+                                        updateRoleElement('Роль');
+                                    }
+                                }, 100);
+                            };
+                            reader.readAsDataURL(imageFile);
+                        } else {
+                            alert('В выбранной папке не найдено основного изображения!');
+                        }
+
+                        // Загружаем SVG 1
+                        if (svg1File) {
+                            loadSVGFile(svg1File, 'svg1-content');
+                            console.log('Загружаем SVG 1:', svg1File.name);
+                        } else {
+                            console.log('SVG 1 не найден. Ищем вручную...');
+                            // Попробуем найти вручную
+                            for (let i = 0; i < files.length; i++) {
+                                if (files[i].name.includes('1.svg')) {
+                                    svg1File = files[i];
+                                    loadSVGFile(svg1File, 'svg1-content');
+                                    console.log('Найден SVG 1 вручную:', svg1File.name);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Загружаем SVG 2
+                        if (svg2File) {
+                            loadSVGFile(svg2File, 'svg2-content');
+                            console.log('Загружаем SVG 2:', svg2File.name);
+                        } else {
+                            console.log('SVG 2 не найден. Ищем вручную...');
+                            // Попробуем найти вручную
+                            for (let i = 0; i < files.length; i++) {
+                                if (files[i].name.includes('2.svg')) {
+                                    svg2File = files[i];
+                                    loadSVGFile(svg2File, 'svg2-content');
+                                    console.log('Найден SVG 2 вручную:', svg2File.name);
+                                    break;
+                                }
+                            }
+                        }
+                    };
+
+                    folderInput.click();
+                }
+
+                function loadSVGFile(file, containerId, scale = 1) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const container = document.getElementById(containerId);
+                        if (container) {
+                            // Очищаем контейнер
+                            container.innerHTML = '';
+
+                            // Парсим SVG содержимое
+                            const parser = new DOMParser();
+                            const svgDoc = parser.parseFromString(e.target.result, 'image/svg+xml');
+                            const svgElement = svgDoc.documentElement;
+
+                            // Копируем все дочерние элементы из SVG
+                            while (svgElement.firstChild) {
+                                container.appendChild(svgElement.firstChild);
+                            }
+
+                            console.log(`SVG загружен в ${containerId}`);
+
+                            // Применяем текущие трансформации
+                            if (containerId === 'svg1-content') {
+                                updateSVG1Transform();
+                            } else if (containerId === 'svg2-content') {
+                                updateSVG2Transform();
+                            }
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+
+
+                function forceFontUpdate() {
+                    const nameElement = document.getElementById('nameText');
+                    if (nameElement) {
+                        // Сбрасываем и заново применяем стили
+                        nameElement.style.cssText = '';
+                        nameElement.setAttribute('style', '');
+
+                        setTimeout(() => {
+                            nameElement.style.fontFamily = "'Blazma', sans-serif";
+                            nameElement.style.fontWeight = '400';
+                            nameElement.style.fontSize = '67.8015px';
+                            nameElement.style.fill = '#1A1A1A';
+                            nameElement.style.opacity = '1';
+                        }, 100);
+                    }
+                }
+
+                // Переменная для хранения исходного текста роли
+                let originalRoleText = '';
+
+                function applyRoleText() {
+                    const editor = document.getElementById('roleEditor');
+                    const roleText = editor.value.trim();
+
+                    if (roleText) {
+                        updateRoleElement(roleText);
+                        console.log('Текст роли применен:', roleText);
+                    }
+                }
+
+                function resetRoleText() {
+                    const editor = document.getElementById('roleEditor');
+                    editor.value = originalRoleText;
+                    applyRoleText();
+                }
+
+                function applyNameText() {
+                    const editor = document.getElementById('nameEditor');
+                    const nameText = editor.value.trim();
+
+                    if (nameText) {
+                        updateTextElements(nameText);
+                        // Генерируем штрих-код на основе имени
+                        generateBarcode(nameText);
+                        console.log('Текст имени применен и штрих-код сгенерирован:', nameText);
+                    }
+                }
+
+                // Достаем информацию из названия фото
+                function extractNameFromFilename(filename) {
+                    // Убираем расширение файла
+                    const nameWithoutExtension = filename.replace(/\.[^/.]+$/, "");
+
+                    // Разделяем на слова
+                    const parts = nameWithoutExtension.split(/\s+/);
+
+                    let name = '';
+                    let date = '';
+                    let role = '';
+                    let barcodeNumber = '';
+
+                    // Ищем имя (первые 2 слова) и дату
+                    const nameWords = [];
+                    let dateFound = false;
+                    let barcodeFound = false;
+
+                    for (let i = 0; i < parts.length; i++) {
+                        // Если встретили паттерн даты (число.число), отмечаем что дата найдена
+                        if (parts[i].match(/^\d{1,2}\.\d{1,2}$/)) {
+                            date = parts[i];
+                            dateFound = true;
+                            continue;
+                        }
+
+                        // Ищем последовательность цифр для штрих-кода (9+ цифр)
+                        if (!barcodeFound && parts[i].match(/^\d{9,}$/)) {
+                            barcodeNumber = parts[i];
+                            barcodeFound = true;
+                            continue;
+                        }
+
+                        // Берем первые 2 слова до даты как имя
+                        if (!dateFound && nameWords.length < 2) {
+                            nameWords.push(parts[i]);
+                        }
+
+                        // Все что после даты - это роль
+                        if (dateFound && parts[i] !== date && !barcodeFound) {
+                            role += parts[i] + ' ';
+                        }
+                    }
+
+                    name = nameWords
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ');
+
+                    role = role.trim();
+
+                    // Если дату не нашли, ищем другие паттерны и пересчитываем роль
+                    if (!date) {
+                        const dateMatch = nameWithoutExtension.match(/(\d{1,2}\.\d{1,2})/);
+                        if (dateMatch) {
+                            date = dateMatch[1];
+                            // Роль - все что после даты
+                            const dateIndex = nameWithoutExtension.indexOf(date);
+                            role = nameWithoutExtension.substring(dateIndex + date.length).trim();
+                            // Убираем имя из роли
+                            role = role.replace(name, '').trim();
+                            // Убираем штрих-код из роли если нашли
+                            if (barcodeNumber) {
+                                role = role.replace(barcodeNumber, '').trim();
+                            }
+                        } else {
+                            // Если даты нет, роль - все что после первых 2 слов
+                            role = parts.slice(2).join(' ').trim();
+                            // Убираем штрих-код из роли если нашли
+                            if (barcodeNumber) {
+                                role = role.replace(barcodeNumber, '').trim();
+                            }
+                        }
+                    }
+
+                    // Если не нашли штрих-код в отдельных словах, ищем в строке
+                    if (!barcodeNumber) {
+                        const barcodeMatch = nameWithoutExtension.match(/\d{9,}/);
+                        if (barcodeMatch) {
+                            barcodeNumber = barcodeMatch[0];
+                        }
+                    }
+
+                    // Заполняем редакторы
+                    const roleEditor = document.getElementById('roleEditor');
+                    const nameEditor = document.getElementById('nameEditor');
+
+                    if (roleEditor) roleEditor.value = role;
+                    if (nameEditor) nameEditor.value = name;
+
+                    // Обновляем все элементы
+                    updateTextElements(name);
+                    updateDateElement(date);
+                    updateRoleElement(role);
+
+                    // Генерируем штрих-код если нашли цифры
+                    if (barcodeNumber) {
+                        generateBarcode(barcodeNumber);
+                        console.log('Штрих-код сгенерирован из названия файла:', barcodeNumber);
+                    } else {
+                        console.log('Цифры для штрих-кода не найдены в названии файла');
+                    }
+                }
+
+                function updateRoleElement(role) {
+                    const roleElement = document.getElementById('roleText');
+                    const maxWidth = 915.9;
+                    const fixedFontSize = 67.8015; // Фиксированный размер шрифта
+
+                    if (roleElement && role) {
+                        // Устанавливаем фиксированный размер шрифта
+                        roleElement.style.fontSize = fixedFontSize - 7 + 'px';
+
+                        // Разбиваем текст на строки с фиксированным размером шрифта
+                        const lines = wrapTextToWidth(role, maxWidth, fixedFontSize);
+
+                        // Очищаем и добавляем все строки (без обрезки)
+                        roleElement.innerHTML = '';
+                        lines.forEach((line, index) => {
+                            const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+                            tspan.textContent = line;
+                            tspan.setAttribute('x', index === 0 ? '0' : '10');
+                            tspan.setAttribute('dy', index === 0 ? '-5' : '1.2em');
+                            roleElement.appendChild(tspan);
+                        });
+
+                        console.log('Роль установлена:', role, 'Размер шрифта:', fixedFontSize + 'px', 'Строк:', lines.length);
+                    } else if (roleElement) {
+                        // Если роли нет, устанавливаем пустой текст
+                        roleElement.innerHTML = '';
+                    }
+                }
+
+
+                // Функция для разбивки текста на строки по ширине с учетом ручных переносов
+                function wrapTextToWidth(text, maxWidth, fontSize) {
+                    // Сначала разбиваем текст на строки по ручным переносам (Enter)
+                    const manualLines = text.split('\n');
+                    const lines = [];
+
+                    // Создаем временный элемент для измерения
+                    const tempText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    tempText.style.fontFamily = "'Blazma', sans-serif";
+                    tempText.style.fontStyle = 'italic';
+                    tempText.style.fontSize = fontSize + 'px';
+                    tempText.style.visibility = 'hidden';
+                    document.querySelector('svg').appendChild(tempText);
+
+                    // Обрабатываем каждую строку, созданную ручными переносами
+                    manualLines.forEach(manualLine => {
+                        const words = manualLine.split(' ');
+                        let currentLine = words[0];
+
+                        // Автоматический перенос по ширине для каждой ручной строки
+                        for (let i = 1; i < words.length; i++) {
+                            const testLine = currentLine + ' ' + words[i];
+                            tempText.textContent = testLine;
+                            const testWidth = tempText.getComputedTextLength();
+
+                            if (testWidth <= maxWidth) {
+                                currentLine = testLine;
+                            } else {
+                                // Проверяем, можно ли разбить более логично
+                                if (currentLine.split(' ').length > 1 && i < words.length - 1) {
+                                    // Пробуем добавить следующее слово и проверить
+                                    const nextTestLine = currentLine + ' ' + words[i] + ' ' + words[i + 1];
+                                    tempText.textContent = nextTestLine;
+                                    const nextTestWidth = tempText.getComputedTextLength();
+
+                                    if (nextTestWidth <= maxWidth) {
+                                        currentLine = nextTestLine;
+                                        i++; // Пропускаем следующее слово, так как мы его уже добавили
+                                    } else {
+                                        lines.push(currentLine);
+                                        currentLine = words[i];
+                                    }
+                                } else {
+                                    lines.push(currentLine);
+                                    currentLine = words[i];
+                                }
+                            }
+                        }
+                        lines.push(currentLine);
+                    });
+
+                    // Удаляем временный элемент
+                    document.querySelector('svg').removeChild(tempText);
+
+                    return lines;
+                }
+
+                function updateDateElement(date) {
+                    // Ищем элемент даты
+                    const dateElement = document.querySelector('text[transform*="1060"][transform*="241.9"] tspan');
+
+                    if (dateElement) {
+                        // Используем переданную дату ИЛИ сегодняшнюю дату
+                        dateElement.textContent = date || getTodayDate();
+
+                        // Устанавливаем только класс - остальные стили уже в CSS
+                        dateElement.setAttribute('class', 'st21');
+
+                        console.log('Дата установлена:', date || getTodayDate());
+                    } else {
+                        console.log('Элемент даты не найден');
+                    }
+                }
+                // Функция обновления текстовых элементов
+                function updateTextElements(name) {
+                    const nameElement = document.getElementById('nameText');
+                    if (nameElement) {
+                        nameElement.textContent = name || 'Имя Фамилия';
+                        console.log('Текст установлен:', name || 'Имя Фамилия');
+                    }
+                }
+                // Функция ограничения значений
+                function clamp(value, min, max) {
+                    return Math.min(Math.max(value, min), max);
+                }
+
+                // Функция обновления трансформации
+                function updateTransform() {
+                    const photo = document.getElementById('userPhoto');
+
+                    // Центр изображения для масштабирования
+                    const centerX = 251.7 + 741.6 / 2;
+                    const centerY = 61.4 + 744.2 / 2;
+
+                    // Трансформация: перемещаем в центр, масштабируем, возвращаем обратно + перемещение
+                    const transform = `
+        translate(${currentX} ${currentY})
+        translate(${centerX} ${centerY})
+        scale(${currentScale})
+        translate(${-centerX} ${-centerY})
+    `;
+
+                    photo.setAttribute('transform', transform);
+
+                    // Обновляем ползунки
+                    updateSliders();
+                }
+
+                // Обновление ползунков при изменении через мышь
+                function updateSliders() {
+                    document.getElementById('xSlider').value = currentX;
+                    document.getElementById('ySlider').value = currentY;
+                    document.getElementById('scaleSlider').value = currentScale * 100;
+
+                    document.getElementById('xValue').textContent = currentX;
+                    document.getElementById('yValue').textContent = currentY;
+                    document.getElementById('scaleValue').textContent = Math.round(currentScale * 100);
+                }
+
+                // Обработчики мыши
+                function setupMouseControls() {
+                    const svg = document.querySelector('svg');
+                    const photo = document.getElementById('userPhoto');
+
+                    if (!photo) {
+                        console.error('Элемент userPhoto не найден');
+                        return;
+                    }
+
+                    console.log('Инициализация управления мышью для фото');
+
+                    // Начало перетаскивания - вешаем на родительский g элемент
+                    const photoContainer = photo.parentElement;
+                    photoContainer.addEventListener('mousedown', function (e) {
+                        isDragging = true;
+                        lastMouseX = e.clientX;
+                        lastMouseY = e.clientY;
+                        photo.style.cursor = 'grabbing';
+                        photoContainer.style.cursor = 'grabbing';
+                        console.log('Начало перетаскивания');
+                        e.preventDefault();
+                    });
+
+                    // Перетаскивание
+                    document.addEventListener('mousemove', function (e) {
+                        if (!isDragging) return;
+
+                        const deltaX = e.clientX - lastMouseX;
+                        const deltaY = e.clientY - lastMouseY;
+
+                        // Обновляем позицию с учетом масштаба
+                        currentX = clamp(currentX + deltaX / currentScale, -MAX_X, MAX_X);
+                        currentY = clamp(currentY + deltaY / currentScale, -MAX_Y, MAX_Y);
+
+                        lastMouseX = e.clientX;
+                        lastMouseY = e.clientY;
+
+                        updateTransform();
+                        console.log(`Перемещение: X=${currentX}, Y=${currentY}, Scale=${currentScale}`);
+                        e.preventDefault();
+                    });
+
+                    // Конец перетаскивания
+                    document.addEventListener('mouseup', function () {
+                        if (isDragging) {
+                            isDragging = false;
+                            photo.style.cursor = 'grab';
+                            photo.parentElement.style.cursor = 'grab';
+                            console.log('Конец перетаскивания');
+                        }
+                    });
+
+                    // Масштабирование колесиком мыши
+                    photoContainer.addEventListener('wheel', function (e) {
+                        e.preventDefault();
+
+                        const zoomIntensity = 0.1;
+                        const wheel = e.deltaY < 0 ? 1 : -1;
+                        const zoom = Math.exp(wheel * zoomIntensity);
+
+                        const oldScale = currentScale;
+                        currentScale = clamp(currentScale * zoom, 0.5, 2);
+
+                        console.log(`Масштабирование: ${oldScale} -> ${currentScale}`);
+                        updateTransform();
+                    });
+
+                    // Курсор при наведении
+                    photoContainer.addEventListener('mouseenter', function () {
+                        if (!isDragging) {
+                            photo.style.cursor = 'grab';
+                            photoContainer.style.cursor = 'grab';
+                        }
+                    });
+
+                    photoContainer.addEventListener('mouseleave', function () {
+                        if (!isDragging) {
+                            photo.style.cursor = 'default';
+                            photoContainer.style.cursor = 'default';
+                        }
+                    });
+
+                    console.log('Управление мышью инициализировано');
+                }
+
+                // Обработчики ползунков
+                document.getElementById('xSlider').addEventListener('input', function (e) {
+                    currentX = clamp(parseInt(e.target.value), -MAX_X, MAX_X);
+                    updateTransform();
+                });
+
+                document.getElementById('ySlider').addEventListener('input', function (e) {
+                    currentY = clamp(parseInt(e.target.value), -MAX_Y, MAX_Y);
+                    updateTransform();
+                });
+
+                document.getElementById('scaleSlider').addEventListener('input', function (e) {
+                    currentScale = parseInt(e.target.value) / 100;
+                    updateTransform();
+                });
+
+                // Функция сброса положения
+                function resetPosition() {
+                    currentX = 0;
+                    currentY = 0;
+                    currentScale = 1;
+                    updateTransform();
+                }
+
+
+
+                // Обновляем пределы ползунков
+                document.getElementById('xSlider').min = -MAX_X;
+                document.getElementById('xSlider').max = MAX_X;
+                document.getElementById('ySlider').min = -MAX_Y;
+                document.getElementById('ySlider').max = MAX_Y;
+
+                // Автоматическая загрузка при выборе файла
+                document.getElementById('photoInput').addEventListener('change', loadPhoto);
+
+                // Инициализация
+
+                resetPosition();
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    setTimeout(forceFontUpdate, 500);
+                });
+
+
+                // Проверим какие варианты шрифта действительно доступны
+                const testElement = document.getElementById('nameText');
+                const fonts = ['Blazma', 'Blazma Italic', 'Blazma-Italic'];
+
+                fonts.forEach(fontName => {
+                    testElement.style.fontFamily = fontName;
+                    console.log(`Testing font: ${fontName}`);
+                    setTimeout(() => {
+                        const computed = window.getComputedStyle(testElement);
+                        console.log(`Computed font-family: ${computed.fontFamily}`);
+                    }, 100);
+                });
+
+
+                // // Функция для отображения позиции курсора
+                // function setupCursorTracking() {
+                //     const cursorPosition = document.getElementById('cursorPosition');
+                //     const cursorX = document.getElementById('cursorX');
+                //     const cursorY = document.getElementById('cursorY');
+
+                //     // Отслеживаем движение курсора по всей странице
+                //     document.addEventListener('mousemove', function (e) {
+                //         // Получаем позицию курсора относительно страницы
+                //         const x = e.pageX;
+                //         const y = e.pageY;
+
+                //         // Обновляем значения
+                //         cursorX.textContent = x;
+                //         cursorY.textContent = y;
+
+                //         // Показываем индикатор
+                //         cursorPosition.style.display = 'block';
+
+                //         // Можно также обновить позицию индикатора чтобы следовать за курсором
+                //         cursorPosition.style.left = (x + 10) + 'px';
+                //         cursorPosition.style.top = (y + 10) + 'px';
+                //     });
+
+                //     // Скрываем индикатор когда курсор уходит со страницы
+                //     document.addEventListener('mouseleave', function () {
+                //         cursorPosition.style.display = 'none';
+                //     });
+
+                //     // Показываем индикатор когда курсор возвращается на страницу
+                //     document.addEventListener('mouseenter', function () {
+                //         cursorPosition.style.display = 'block';
+                //     });
+                // }
+
+                // // Добавьте вызов функции в инициализацию
+                // setupCursorTracking();
+
+
+
+                // Переменные для SVG элементов
+                let svg1X = 8;
+                let svg1Y = 0;
+                let svg1Scale = 8;
+
+                let svg2X = 8;
+                let svg2Y = 0;
+                let svg2Scale = 8;
+
+                // Функции обновления трансформации SVG
+                function updateSVG1Transform() {
+                    const svg1Content = document.getElementById('svg1-content');
+                    if (svg1Content) {
+                        svg1Content.setAttribute('transform', `translate(${svg1X} ${svg1Y}) scale(${svg1Scale})`);
+                    }
+                }
+
+                function updateSVG2Transform() {
+                    const svg2Content = document.getElementById('svg2-content');
+                    if (svg2Content) {
+                        svg2Content.setAttribute('transform', `translate(${svg2X} ${svg2Y}) scale(${svg2Scale})`);
+                    }
+                }
+
+                // Функции сброса положения
+                function resetSVG1Position() {
+                    svg1X = 8;
+                    svg1Y = 0;
+                    svg1Scale = 8;
+                    updateSVG1Transform();
+                    updateSVG1Sliders();
+                }
+
+                function resetSVG2Position() {
+                    svg2X = 8;
+                    svg2Y = 0;
+                    svg2Scale = 8;
+                    updateSVG2Transform();
+                    updateSVG2Sliders();
+                }
+
+                // Обновление ползунков
+                function updateSVG1Sliders() {
+                    document.getElementById('svg1XSlider').value = svg1X;
+                    document.getElementById('svg1YSlider').value = svg1Y;
+                    document.getElementById('svg1ScaleSlider').value = svg1Scale * 100;
+
+                    document.getElementById('svg1XValue').textContent = svg1X;
+                    document.getElementById('svg1YValue').textContent = svg1Y;
+                    document.getElementById('svg1ScaleValue').textContent = Math.round(svg1Scale * 100);
+                }
+
+                function updateSVG2Sliders() {
+                    document.getElementById('svg2XSlider').value = svg2X;
+                    document.getElementById('svg2YSlider').value = svg2Y;
+                    document.getElementById('svg2ScaleSlider').value = svg2Scale * 100;
+
+                    document.getElementById('svg2XValue').textContent = svg2X;
+                    document.getElementById('svg2YValue').textContent = svg2Y;
+                    document.getElementById('svg2ScaleValue').textContent = Math.round(svg2Scale * 100);
+                }
+
+                // Обработчики ползунков для SVG 1
+                document.getElementById('svg1XSlider').addEventListener('input', function (e) {
+                    svg1X = parseInt(e.target.value);
+                    updateSVG1Transform();
+                    updateSVG1Sliders();
+                });
+
+                document.getElementById('svg1YSlider').addEventListener('input', function (e) {
+                    svg1Y = parseInt(e.target.value);
+                    updateSVG1Transform();
+                    updateSVG1Sliders();
+                });
+
+                document.getElementById('svg1ScaleSlider').addEventListener('input', function (e) {
+                    svg1Scale = parseInt(e.target.value) / 100;
+                    updateSVG1Transform();
+                    updateSVG1Sliders();
+                });
+
+                // Обработчики ползунков для SVG 2
+                document.getElementById('svg2XSlider').addEventListener('input', function (e) {
+                    svg2X = parseInt(e.target.value);
+                    updateSVG2Transform();
+                    updateSVG2Sliders();
+                });
+
+                document.getElementById('svg2YSlider').addEventListener('input', function (e) {
+                    svg2Y = parseInt(e.target.value);
+                    updateSVG2Transform();
+                    updateSVG2Sliders();
+                });
+
+                document.getElementById('svg2ScaleSlider').addEventListener('input', function (e) {
+                    svg2Scale = parseInt(e.target.value) / 100;
+                    updateSVG2Transform();
+                    updateSVG2Sliders();
+                });
+
+                // Инициализация при загрузке
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    updateSVG1Transform();
+                    updateSVG2Transform();
+                    updateSVG1Sliders();
+                    updateSVG2Sliders();
+                });
+
+                // Функция переключения сворачивания
+                function toggleCollapsible(svgType) {
+                    const content = document.getElementById(`${svgType}-controls`);
+                    const arrow = document.querySelector(`#${svgType}-controls`).previousElementSibling.querySelector('.collapsible-arrow');
+
+                    if (content.classList.contains('show')) {
+                        // Скрываем
+                        content.classList.remove('show');
+                        arrow.classList.remove('rotated');
+                    } else {
+                        // Показываем
+                        content.classList.add('show');
+                        arrow.classList.add('rotated');
+                    }
+                }
+
+
+                // Генерация штрих-кода CODE39 
+                function generateBarcode(code) {
+                    const barcodeContent = document.getElementById('barcode-content');
+                    const barcodeContainer = document.getElementById('barcode-container');
+                    if (!barcodeContent || !barcodeContainer) return;
+
+                    // Очищаем контейнер
+                    barcodeContent.innerHTML = '';
+
+                    // Добавляем префикс к цифрам
+                    const fullCode = "IUAIT/" + code;
+
+                    // Генерируем полосы CODE39 для полного кода
+                    const bars = generateCODE39Bars(fullCode);
+                    let x = 10;
+                    const barHeight = 98.8;
+
+                    // Рисуем только черные полосы
+                    bars.forEach((isBlack, index) => {
+                        if (isBlack) {
+                            const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            bar.setAttribute('x', x);
+                            bar.setAttribute('y', 0);
+                            bar.setAttribute('width', 2);
+                            bar.setAttribute('height', barHeight);
+                            bar.setAttribute('fill', '#1a1a1a');
+                            barcodeContent.appendChild(bar);
+                        }
+                        x += 2;
+                    });
+
+                    // Вычисляем ширину полученного штрих-кода
+                    const barcodeWidth = x; // x теперь содержит общую ширину (450px)
+
+                    // Вычисляем масштаб
+                    const targetWidth = 724;
+                    const scaleX = targetWidth / barcodeWidth;
+
+                    // Применяем масштаб к контейнеру
+                    barcodeContainer.setAttribute('transform', `translate(505.7 1199.2) scale(${scaleX}, 1)`);
+
+                    console.log('Штрих-код сгенерирован:', {
+                        код: fullCode,
+                        ширина: barcodeWidth + 'px',
+                        масштаб: scaleX.toFixed(4),
+                        целеваяШирина: targetWidth + 'px'
+                    });
+                }
+
+                // Генерация полос для формата CODE39
+                function generateCODE39Bars(code) {
+                    // Словарь CODE39 (narrow=0, wide=1)
+                    const code39Dict = {
+                        '0': '0011010011010', '1': '1001010011010', '2': '0011010010110',
+                        '3': '1001010010110', '4': '0011010010101', '5': '1001010010101',
+                        '6': '0010110011010', '7': '1000110011010', '8': '0010110010110',
+                        '9': '1000110010110', 'A': '1001010011010', 'B': '0010110011010',
+                        'C': '1000110011010', 'D': '0011010010110', 'E': '1001010010110',
+                        'F': '0010110010110', 'G': '1001010010101', 'H': '0010110010101',
+                        'I': '1000110010101', 'J': '0011010010101', 'K': '1001011001010',
+                        'L': '0011011001010', 'M': '1001011000110', 'N': '0011011000110',
+                        'O': '1001011000101', 'P': '0011011000101', 'Q': '1001001011010',
+                        'R': '0011001011010', 'S': '1001001010110', 'T': '0011001010110',
+                        'U': '1001001010101', 'V': '0011001010101', 'W': '1001101001010',
+                        'X': '0011101001010', 'Y': '1001101000110', 'Z': '0011101000110',
+                        '-': '1001101000101', '.': '0011101000101', ' ': '1001001101010',
+                        '*': '0011001101010', '$': '1001001100110', '/': '0011001100110',
+                        '+': '1001001100101', '%': '0011001100101'
+                    };
+
+                    // Начальный маркер *
+                    let binaryPattern = code39Dict['*'];
+
+                    // Добавляем каждый символ
+                    for (let i = 0; i < code.length; i++) {
+                        const char = code[i];
+                        if (code39Dict[char]) {
+                            binaryPattern += code39Dict[char];
+                        }
+                    }
+
+                    // Конечный маркер *
+                    binaryPattern += code39Dict['*'];
+
+                    // Преобразуем бинарный паттерн в массив черных/белых полос
+                    const bars = [];
+                    for (let i = 0; i < binaryPattern.length; i++) {
+                        bars.push(binaryPattern[i] === '1');
+                    }
+
+                    return bars;
+                }
+
+                // Инициализация - можно оставить свернутыми по умолчанию
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Если хотите чтобы были развернуты при загрузке, раскомментируйте:
+                    // toggleCollapsible('svg1');
+                    // toggleCollapsible('svg2');
+                });
+
+                // Функция переключения окошка помощи
+                function toggleHelp() {
+                    const helpPopup = document.getElementById('helpPopup');
+                    helpPopup.classList.toggle('show');
+                }
+
+                // Закрытие по клику вне окошка
+                document.addEventListener('click', function (event) {
+                    const helpPopup = document.getElementById('helpPopup');
+                    const helpIcon = document.querySelector('.help-icon');
+
+                    if (!helpPopup.contains(event.target) && !helpIcon.contains(event.target)) {
+                        helpPopup.classList.remove('show');
+                    }
+                });
+
+                // Закрытие по ESC
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        const helpPopup = document.getElementById('helpPopup');
+                        helpPopup.classList.remove('show');
+                    }
+                });
+
+                // Автоматическое применение текста роли при вводе
+                document.addEventListener('DOMContentLoaded', function () {
+                    const roleEditor = document.getElementById('roleEditor');
+                    if (roleEditor) {
+                        roleEditor.addEventListener('input', function () {
+                            applyRoleText();
+                        });
+                    }
+                });
+
+
+
+                function downloadAsPNG() {
+                    try {
+                        const svgElement = document.getElementById('Шаблон');
+                        const svgClone = svgElement.cloneNode(true);
+
+                        // ВСТРАИВАЕМ Base64 шрифт прямо в SVG
+                        const style = document.createElement('style');
+                        style.textContent = `
+            @font-face {
+                font-family: 'Lexa';
+                src: url('data:font/otf;charset=utf-8;base64,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7biA///dtgD//921wP//3bXAi4v//7tuAP8ARJRAi/8ARJIA/wBEkgCL/wFW3AAF//39tcD//qkkABX/AESUgAYT94D/ARJMwP//u2uAB/8BVtnAFv//u3MA/wBElID//zJHwIuL//+7a4D/AM24QIuL//+7a4D//3bXQIv//7twgP//u3DA/wDNuECL/wBEjQD/AESPQAX//7twgP//MkpAFf8ARJIA/wCJI8D//7tuAAYO9vc0/wBEkgCL/wBEkcD/AM24gP8ARJHAi/8ARJIAEr3/AESSAP8AZtxA/wBEkcD/AXkmgP8ARJIAE17/AJjcQP8CO24AFf8AIkpA/wBEkgD//7trgAb//7tuAP//u24Ai//+qSQABROe/wBEkgD//7tuAP8ARJSAi4v/AESSAP//3bXAi///3bXA/wAiSkCL/wESR4AF/wIklID/AGbcQBX//7trgP//u24A/wAiSkAG/wAiSkD//921wIv//u24gP//3bXA///dtcD//921wIuL//+7bgD/AESUgIsFE17/AESSAP8ARJIAi/8BVtwABf/+QkeAFv//u25A+4QG/wBm3AD//5kkAPeEi4v/AESRwP//MkfAi///u24A/wBEkgAFEy7/AIkmgAf/ARJKQP8ARJHAFf//MkfAi///u24A//+7bkD/ARJKQIsFDvh49zT/AESSAP8ARJHA/wBEkgCL/wBElID/AESSAP8ARJHAi/8ARJIAEr3/AESSAP8AZtxA/wBEkcD/AM24QP8ARJIA/wAiR8D/AIkjwP8AAAKA/wBEkgD3hP8ARJIAE4/g/wCY3ED/AjtuABX/ACJHwP8ARJIA//+7bgAG//+7bgD//7tuAIv//qkkAP8ARJIA//+7bgD/AESSAIuL/wBEkgD//924QIv//921wP8AIkpAi/8BEkeABf8DnbhA/wBm3EAV//+7bgD//7tuAP8AIkfABv8AIkpA///dtcCL//7tuID//921wP//3bXA///duECLi///u24A/wBEkgCL/wBEkgD/AESSAIv/AVbcAAUTl+D//stuABb//7tuAP//u25Ai//+7bXA/wBEkgCLi/8BEkpA/wCJJACLi/8ARJHABf/+qSPA//+7bkAVUAr//5kmQP//u25AFROn4P//u24A//+ZJAAHE9fg//+7bgD//7trgP//3bXAi4v/AIkmgAUTz+D/AESRwP//u25A//6pJAD/AESRwP8ARJHA/wBEkgAHE7fg/wBEkgD/AESSAP8ARJRAi4v//3bcQP8ARJIAi4v/ARJKQAX//7tuAP8ARJHAFf//dtnAi///u24A//+7bkD/AM24QIsFDvw3+RT31AG99zQD92b5FBWL99T7NPs0i/s0BQ73df8AADhA/wCgtcCL/wCgtcCL/wCguICL/wCgtcCL/wCgtcASvf8AoLXA/wCgtcD/AKC4gP8AoLXA/wCgtcAUBxMn/wDStcD/AUGjwBX//19KQAYTR4v//19KQAUTp/8AoLXA//9fSkD/AKC1wIuL//9fSkD/AKC4gIuL/wCgtcD/AKC1wIuL/wCgtcD//h3cAIsF/wHiJAAWE0dRChMX/wCgtcD/AKC4gBUTD4v/AKC1wP//X0pA/wCgtcD//19KQIuL/wCgtcD//19HgIuL//9fSkD//19KQIsFExf//19KQAcTD/8B4iQABhMX//9fSkAH//19JkAWUQoTR/8CgtnA//6+kcAVEyf//19KQP8AoLiABRMX//6+kcCLBRMn/wCgtcD//19HgAUOi/c0+HT3NNv3NBK99zSL/wCf/8D/AKAAQP8An//Ai/8AoABAE+j3ZvoEFVIKE+T31Ps0FVIKE+r/AJ//wPuEFVMKE/JUCv0UFvs0/HQGE+pVChPwUwoOoHagdvc09zSL9zT3NPc02/c0Er33NIv/AJ//wP8AoABA/wCf/8CL/wCgAEATDQD3ZvoEFVIKEwyA99T7NBVSChMeQP8An//A/CQVVgoTrgBXChMtgP8An//AiwUTnID/AKAAQPc0BROeQFgK//9f/8D3NBUTDQD71IsFEw5AWQoO+4T/AHEjwP8AftxAd593n/c0+HT3NBK99zT/AR7cQP8AcSPAE573Zvm0FVoK+RT3NBVbCv/+ntxA//0BI8AVXAoTzl0KDov3NPc09zT3NPc0Ab33NAMU4L0WKAr3NPs0FSkK//9gAED9FBUqCv0U99QVKwr4xAReCg6gdqB2+RT3NNv/AGqrgP//yqkA/wBqq4ASvfc0/wHf/8D/AKAAQBMu+Pb6pBX7NIsFEzZfChMuYAr/AE//wP//equAFWEKE6ZiCv20/bQVNgoOi/c0+RR3n3fv9zQSvfc0i/8An//A/wCgAED/AJ//wIv/AKAAQBOU92b6BBVSChOS99T7NBVSChPZ/wCf/8D7hBVjChPW9zT7NPfUiwUT2WQKDqB2oHb3NPc0i/c09zT3NBK99zT/Ad//wP8AoABAEw7/ArH/wPqkFV4K/wCf/8D7hBUTHlYKE65lChOeZgr//1//wPc0FWcKDqB2oHb3NPc0i/c09zT3NBK99zT/Ad//wP8AoABAEx7/ArH/wPkUFVYKE65lChOeZgr//1//wPc0FWcK//4gAED4JBVoCg6gdqB29zT3NIv3NPc09zQSvfc0/wHf/8D/AKAAQBMe/wKx/8D5FBVWChOuZQoTnmYK//9f/8D3NBVnCv//EABA99QVaQoOoHagdvc09zSL9zT3NPc02/c0Er33NIv/AJ//wP8AoABA/wCf/8CL/wCgAEATDQD3ZvoEFVIKEwyA99T7NBVSChMeQP8An//A/CQVVgoTrgBXChMtgP8An//AiwUTnID/AKAAQPc0BROeQFgK//9f/8D3NBUTDQD71IsFEw5AWQoOoHagdvc09zSL9zT3NPc02/8AaquA///KqQD/AGqrgBK99zT/Ad//wP8AoABAExmA/wKx/8D5FBVWChOpgGUKE5mAZgr//1//wPc0FWcKEwuA//+wAED4JBX7NIsFEw2AXwoTC4BqCg77hP8AcSPA/wB+3EB3n3ef9zT4dPc0Er33NP8BHtxA/wBxI8ATnvdm+bQVWgr5FPc0FVsK//6e3ED//QEjwBVcChPOXQoOi/c09zT3NPc09zQBvfc0AxTg/wKx/8D6pBVeCvx0/gQVKAr3NPs0FSkK//9gAED9FBUqCv0U99QVKwoOi/c09zT3NPc09zQBvfc0AxTgvRYoCvc0+zQVKQr//2AAQP0UFSoK/RT31BUrCvwk+MQVawoOi/c09zT3NPc09zQBvfc0AxTgvRYoCvc0+zQVKQr//2AAQP0UFSoK/RT31BUrCv//EABA+HQVaQoOi/c09zT3NPc09zTb9zQSvfc0i/8An//A/wCgAED/AJ//wBP6vRYoCvc0+zQV+RT3NAYT9v/+H//ABhP6//9gAED9FBUT9ioKE/r9FPfUFRP2Kwr//iAAQPgkFVIK99T7NBVSCg77l6B2oHb5tHefdxK9/wCgAEATqL0WbAr/AUAAQPeEFW0KDvuXoHagdvm0d593Ev8A0gBA9zQTqP8A0gBAFigK//9f/8D3hBVrCg77l6B2oHb5tHefdxL3Fv8AoABAE6j3FhZsCv8AUABA9zQVaQoOKKB2oHb5tHefd+/3NBK9/wCf/8CL/wCgAECL/wCf/8ATqv8A0f/AFmwKEwz//2AAQNsVUgoTCffU+zQVUgoOoHagdvkU9zTb/wBqq4D//8qpAP8AaquAEr33NP8B3//A/wCgAEATLvj2+qQV+zSLBRM2XwoTLmAK/wBP/8D//3qrgBVhChOmYgr9tP20FTYKDov3NPh09zQBvfc0/wHf/8D/AKAAQAP/ArH/wPm0FW4K/RQWbwr/Ad//wPoEFV4KDov3NPh09zQBvfc0/wHf/8D/AKAAQAP/ArH/wPm0FW4K/RQWbwr6BARoCg6L9zT4dPc0Ab33NP8B3//A/wCgAEAD/wKx/8D5tBVuCv0UFm8K94T5tBVpCg6L9zT4dPc02/c0Er33NIv/AJ//wP8AoABA/wCf/8CL/wCgAEAT6Pdm+gQVUgoT5PfU+zQVUgoT6v8An//A+4QVUwoT8lQK/RQW+zT8dAYT6lUKE/BTCg6L9zT4dPc02/8AaquA///KqQD/AGqrgBK99zT/Ad//wP8AoABAE8z/ArH/wPm0FW4K/RQWbwoT3Pgk+gQV+zSLBRPsXwoT3GoKDov3NPkUd593Er33NP8B3//A/wCgAEAT2P8Csf/A+bQVcAr//1//wPeEFV4KDov3NPkUd593Er33NP8B3//A/wCgAEAT2P8Csf/A+bQVcAr9FPeEFWgKDov3NPkUd593Er33NP8B3//A/wCgAEAT2P8Csf/A+bQVcAr8JPc0FWkKDov3NPkUd5937/c0Er33NIv/AJ//wP8AoABA/wCf/8CL/wCgAEATlPdm+gQVUgoTkvfU+zQVUgoT2f8An//A+4QVYwoT1vc0+zT31IsFE9lkCg6gdqB29zT3NIv3NPc09zQSvfc0/wHf/8D/AKAAQBMO/wKx/8D6pBVeCv8An//A+4QVEx5WChOuZQoTnmYK//9f/8D3NBVnCg6L9zT3NPc09zT3NAG99zQDFOC9FigK9zT7NBUpCv//YABA/RQVKgr9FPfUFSsK//8QAED4dBVpCg6L9zT3NPc09zT3NNv3NBK99zSL/wCf/8D/AKAAQP8An//AE/q9FigK9zT7NBX5FPc0BhP2//4f/8AGE/r//2AAQP0UFRP2KgoT+v0U99QVE/YrCv/+IABA+CQVUgr31Ps0FVIKDov3NPc09zT3NPc0Ab33NAMU4L0WKAr3NPs0FSkK//9gAED9FBUqCv0U99QVKwr8JPjEFWsKDvuXoHagdvm0d593Er3/AKAAQBOovRZsCv8BQABA94QVbQoO+5egdqB2+bR3n3cS9xb/AKAAQBOo9xYWbAr/AFAAQPc0FWkKDiigdqB2+bR3n3fv9zQSvf8An//Ai/8AoABAi/8An//AE6r/ANH/wBZsChMM//9gAEDbFVIKEwn31Ps0FVIKDvuXoHagdvm0d593Ev8A0gBA9zQTqP8A0gBAFigK//9f/8D3hBVrCg6L9zT4dPc0Ab33NP8B3//A/wCgAEAD/wKx/8D5tBVuCv0UFm8K/wHf/8D6BBVeCg6L9zT4dPc0Ab33NP8B3//A/wCgAEAD/wKx/8D5tBVuCv0UFm8K94T5tBVpCg6L9zT4dPc0Ab33NP8B3//A/wCgAEAD/wKx/8D5tBVuCv0UFm8K+gQEaAoOi/c0+RR3n3cSvfc0/wHf/8D/AKAAQBPY/wKx/8D5tBVwCv//X//A94QVXgoOi/c0+RR3n3cSvfc0/wHf/8D/AKAAQBPY/wKx/8D5tBVwCvwk9zQVaQoOi/c0+RR3n3cSvfc0/wHf/8D/AKAAQBPY/wKx/8D5tBVwCv0U94QVaAoOoHagdvc09zSL9zT3NPc0Er33NP8B3//A/wCgAEATHv8Csf/A+RQVVgoTrmUKE55mCv//X//A9zQVZwr//xAAQPfUFWkKDij/AUoCgPcgAb3/AdYCgBX7IPh09yAHDvch/wFKAoD3IAG9/wHWAoAV+yD5ZPcgBw77R/lk94QBvfc02/c0A/hW+WQVcQo7FnEKDvtH+WT3hAG99zTb9zQD+Fb5ZBVxCjsWcQoO/Df7NPeEAb33NAO92xVOCg78N/lk94QBvfc0A/dm+WQVcQoOoHagdvm0d5937/c0Er33NIv/AJ//wIv/AKAAQIv/AJ//wIv/AKAAQBMKAPdm+gQVUgoTCID31Ps0FVIKE4kA//9f/8D+pBX/AKAAQPgkBhOKAP//X//ABhMsAP//YABA+CQV+zT7NAYTKgByChMtAHMKEyhA/wHf/8DbFYs7BRMogP//YABA+zQFEykA+zQHEyiA/wCf/8DbBhMoQHQKDqB2oHb5tHefd+/3NBK99zSL/wCf/8CL/wCgAECL/wCf/8CL/wCgAEATCgD3ZvoEFVIKEwiA99T7NBVSChOJAP//X//A/qQV/wCgAED4JAYTigD//1//wAYTLAD//2AAQPgkFfs0+zQGEyoAcgoTLQBzChMoQP8B3//A2xWLOwUTKID//2AAQPs0BRMpAPs0BxMogP8An//A2wYTKEB0Cg54+zT3NPeE9zTb9zQSvfc02/c0i/c0E/S9Fvc0+zT/APACgP8AAAKA/wCf/YD/AJ/9gIv3NPs0i4v7NPuEi4vb9zT3NNuLi/c0BRP4+zSL+4T7hAX4JPh0Ffs0+zT3NAYO+5e999QD+Ab/AO67ABVMCg77l7331AO9/wIuuwAVTQoO+0f7NPeEAb33NNv3NAO92xVOCtsWTgoOoHagdvc09zSL9zT3NPc0Er33NP8B3//A/wCgAEATHv8Csf/A+RQVVgoTrmUKE55mCv//X//A9zQVZwr//iAAQPgkFWgKDqB2oHb3NPc0i/c09zT3NNv/AGqrgP//yqkA/wBqq4ASvfc0/wHf/8D/AKAAQBMZgP8Csf/A+RQVVgoTqYBlChOZgGYK//9f/8D3NBVnChMLgP//sABA+CQV+zSLBRMNgF8KEwuAagoOi/c0+HT3NNv/AGqrgP//yqkA/wBqq4ASvfc0/wHf/8D/AKAAQBPM/wKx/8D5tBVuCv0UFm8KE9z4JPoEFfs0iwUT7F8KE9xqCg7/AU1UgP8AhVSAAf8Bf1RA91wV+1z3XPdc91yL/wCFVID//71XQIv//vVUgP/+9VcAi///eqkA/wEKq4D//vVXAP8AQqjAiwX/AdKrwP8Bj/2AFf/96quA//96q4D/AhVUgAYO46B2oHb5tHefdxL/ATyrgP8AhVSAEyj/ALdUgP8B0quAFfdc91z3XPtc/wCFVICLi/8AQqkA//71VwD/AQqrgP//eqkAi//+9VcA//71VICL//+9VwAFE4j4JP/+LVSAFf8CFVSA//96q4D//eqrgAcO/wFNVwD/AIVUgAH/AgSrgPjsFfdc+1z7XPtci///equA/wBCqMCL/wEKq8D/AQqpAIv/AIVXAP/+9VRA/wEKqQD//71XQIsF//4tVID//nACgBX/AhVUQP8AhVSA//3qq8AGDuKgdqB2+bR3n3cS99D3GROI+Nv34RX7XPtc+1z3XPsZi4tJ9577n/cai/ee95+LzQUTKPwk+GcV/Kn3GfipBw7c/wJMj0D/AI1rwAG9/wCNa8AD/wC/a8D/ATG4QBX/ARrXAP8BGtcAB/8AXkeA/wBeR8D//9DcQP8ALyQA//6G4UCL//+huED//6G4QIv//obhQP8ALyQA///Q3EAF/wJk0cD//9DZgBX//obhAP8BeR8A//+huID//6G4wP8BeR8A//6G4MAFDtz/AEYFAP8AjWvAAb3/AI1rgAP/AdpCgP8A03DAFf/+5SkA/wEa1wAG//+huED/AF5HgP//0NxA///Q3ECL//6G4UD/AF5HwP//obhA/wF5HsCL/wAvI8D/AC8kAAX/AC8kAP8CZNDAFf/+huEA//6G4QD/AF5HQP//obiA/wF5HwD/AXkfQAUO3Pjh9yEB+Mz3IgP3svjhFfeu+68G6iy6u4v4DS3p/A6LXFwFXPz5FfgN+A0t6fwN/A0FDtzR9yEB+M33IQP4zfiCFfuv+68HLS26XPgNi+npi/gNXLsF/Pm6FfgN/A3q6fwO+A0FDvl7////+sD/AIVSAP8AhV7A/wCFUgCL/wCFT0D/AIVSAP8AhU9AEv8AMgKA/wCFT4D/AIVSAP8AhV6A/wBP+ID/AIVRwP8AhVIA/wCFUgD/ACpXAP8AhVIA/wCFUcD/AIVSABPfwP8DHJ7A/wGP/YAV//96rgCL//96rkD//3quAIv//3qhQP8AhVHA//96rgD/AIVSAIv/AIVSAP8AhVIAi/8AhV7ABf//eq4A//96oUAV//96rgD/AIVewP8AhVIABv8BukzA/wCFSkAV//96rkCL//96rgD//3quAIv//3qhQP8AhVIA//96rkD/AIVRwIv/AIVSAP8AhVHAi/8AhV7ABf//eq4A//96oUAV//96rkD/AIVewP8AhVHABv/8ZbiA/wIVSkAV//96rgCL//96sID//3qwwIv//3qwgAUTv8D/AIVPgP//eq5A/wCFUgCL/wCFXoD/AIVRwIv/AIVPgAX//3qhgP//eq4AFf//eq4A/wCFUgD/AIVSAP//erCABv8BxVRA/wEKpoAV//0wB8D//TAHwIv//7ACgP8An/2Ai/8Cz/hA/wLP9cCL2wUOi/8AoAUA/wCf+wD3NPc09zQSvf8AoAUAi/8An/2AE/D/ANIFAPfUFRPoizv/AO/9gPuE/wGP/YCLi/8AoAUA//6//YCL//9gCkD/AJ/2AIv/AAAFAP8BP/hAi4v3NP/+wAKAiwUT8P/+v/2A+zQV/wCgBQD/AJ/9gP//X/sABvm0/wFAAoAVE+j//iACgIv//2ACgPs0i/s0/wCf/YCLi/c0/wHf/YCLBQ75Afc0/wBEkgD/ARJKQP8ARJHAi/8ARJIAEr3/AESRwP8AZtxA/wCJI8CL/wBEkgD/AKtuAP8ARJIA/wCJJkD/AESSAP8AiSQA/wBEkcD/AGbcQP8ARJIAE9fA/wGrI8D/AjtuABUT28D//7tuAP//u25ABRPXwP/+7bXA/wBEkgD/ARJKQP8AiSZA/wBEkcAHE9vA//6pJAD//7tuQBVQChOzwP//u24AFv8AIkfA/wBEkgD//7tuAAb//7tuQP//u24Ai//+qSQA/wBEkcD//7tuAP8ARJIAi4v/AESSAP//3bhAi///3bXA/wAiSkCL/wESR4AF/wQEkgD//stuQBX//924QP//u24A/wBEkgAG/wBEkgD/AESSAIv/AVbcAP//u24A/wBEkgD//7tuAIuL//+7bgD/ACJHwIv/ACJKQP//3bXAi//+7biABRPTwP/9/bXA/wE0kcAVE7PA//+7bgD//qkkAP8ARJIABhPTwP8BEkpA/wBEkgAH/wBElED//7tuAIv//zJHwP8ARJIAi4v3hP//3bXA/wAiSkAFE7PA//+7bkD/AESRwAX/AM21wBYT08D//3bcAP//u25A/wBm3EAG/wBEkgD//7tuAIv//zJHwP8ARJHAi4v3hAUOi/8ATwUA/wB4+ID/AFAFAPeE/wBP+wD/AHj9gP8ATwUAAb3/AE8FAP8AoPiA/wBQAoD/AJ/9gNv/AKD9gP8ATwUAA/hW/wLQ+wAVdQr/AE8FAAR2Cv8AT/2A//34AoAV//9gAoD3hP//r/2A+4QG/wBQAoD//6/7AP8An/2AiwXb/wFABQAVO/8AT/sA//9gAoCLi///sAUA/wCf/YCLi/uE24sFDov3NPc09zT31HefdxL3Zvc0E+j4pvfUFfc0+zT31Ps0+9T7NPs09zT71Pc09zQH9zQH+zQELAoOoHagdvc09zT4dHefdxK99zSL9zSL9zSL9zSL9zQToQD4pvgkFROiAPs0BhOhADsHE6IA+zT7NAYToUB3ChMyAPvU2xX3NAYTNQBJChMyAPc0+zQFEzBA+HT31BWLOwUTMID7NPs0BRMxAPs0BxMwgPc02wYTMEBICg6gdqB29zT3NPh0d593Er33NIv3NIv3NIv3NIv3NBOhAPim+CQVE6IA+zQGE6EAOwcTogD7NPs0BhOhQHcKEzIA+9TbFfc0BhM1AEkKEzIA9zT7NAUTMED4dPfUFYs7BRMwgPs0+zQFEzEA+zQHEzCA9zTbBhMwQEgKDov/AE8FAP8AePsA2/eE2/8AePsA/wBPBQABvf8ATwUA/wEY+wD/AFACgP8BGPiA/wBPBQAD+Fb/AtD7ABV1Cv8ATwUABHYK/wAoAoD8nBWL94T//6/9gNuL/////YCL/wAAAoA7i4s724uL+4Q7i4s794SLi9sFDov/AE8FAP8AePsA9zT7NNvb29vb/wB4+wD/AE8FABK9/wBPBQD/AKD7ANv3NNv/AKD7AP8ATwUAE4/A+Fb/AtD7ABV4Cv8ATwUABHYKE8/A+zT8TBX7NNsHE6/A94Tb+4QGE8/A2wcTn8D3NBbb24vbO9v//1/9gIuL/////YD//7ACgP//sAKAizvbi4vb9zSLi2NjY2OLBRPPwDs7BQ6L/wBPBQD/AHj7ANvb29vb/wB4+wD/AE8FAAG9/wBPBQD/AZD7ANv/AKD7AP8ATwUAA/hW/wLQ+wAVdQr/AE8FAAR2Cvs0/JwVO/eEB9vbi9s7i4s7Bdv3hBU72/uEi4s794SLizv7NIuLO/c0i9vbBQ6L/wBPBQD/ARj4gP8AT/rA/wEZAsD/AE8FAAG9/wBPBQD/AKD7AP8AUAKA/wCf/YD/AE/9gP8AoP2A/wBPBQAD+Fb/AtD7ABV1Cv8ATwUABHYK2///N/sAFYv//2ACgIv7hP8AT/2Ai4v/AY/9gAX//7ACgP//X/1AFf//YAKA/wCgBUD//6/9gP//YAKABv8AT/sA//+v/YD/AFACgIsFDov/AE8FAP8AePsA29vbi/c0O9v/AHj7AP8ATwUAEr3/AE8FAP8AoPsA2/c02/8AoPsA/wBPBQATx8D4Vv8C0PsAFXgK/wBPBQAEdgoTz8D3NPusFdsHE9fA+4SLO4uL+zTbiwUTz8DbBxPnwPc0+zQVO/s02zs7B9s79zSL29uL2zvbBRPXwPs0iwUT58DbOwUOi/8ATwUA/wB4+wDb29vb2/8AePsA/wBPBQABvf8ATwUA/wCg+wDb9zTb/wCg+wD/AE8FAAP4Vv8C0PsAFXUK/wBPBQAEdgo7+/wV2zvbi4s7+zSLi/c0i9v3hIs72/s0izs7izuL+zTbO/c0i9vbBYvbO9sFDov/AE8FAP8BuPsA2/8AePsA/wBPBQABvf8ATwUA/wDw/YDb29v/AKD4gP8ATwUAA/hW/wLQ+wAVdQr/AE8FAAR2Cv8AoAKA+6wVO9v//w/9gIuLO/8A8AKAi4tj+zT7NIv7DNuLi9v3NPc0BQ6L/wBPBQD/AHj7ANvb29vb/wB4+wD/AE8FAAG9/wBPBQD/AKD7ANv3NNv/AKD7AP8ATwUAA/hW/wLQ+wAVdQr/AE8FAAR2Cvc0+6wVO9v7NIs7O4s7s2NjY4s72zv3NIvb24vbY7OzswU7+zQV+zTb9zQG+zTbFdv3NDsHDov/AE8FAP8AePsA29vb29v/AHj7AP8ATwUAAb3/AE8FAP8AoPsA2/c02/8AoPsA/wBPBQAD+Fb/AtD7ABV1Cv8ATwUABHYK2/xMFTvbO4uL2/c0i4v7NIs7+4SL2zv3NIvb24vbi/c0O9v7NIs7OwWLO9s7BQ6L91z/AFACgPeE/wBP+wD/AMgCgAG9/wDv+wD/AFAFAP8An/2A2/8A8AKAA/gG/wEYAoAV/wCf/YD3hP//YAKABtv/ARf9gBV2Cv8An/2A//34AoAV//+v/YD//6/9gP//YAKABv//r/2A/wBQAoCL94T/AFACgIuL/wBP+wD/AJ/9gIv/AFACgP//sAUABQ6L91z4JPdcAfjO96wD+Fb5tBV2CvcM/OwV+4Tb2/eEO9vbBts7i/uE24sFDov3XNvbi9uL29v3XBK994T31PeEE474Vvm0FXkKE973NPv8FTs7+zSLizv3hIuLO/vUiwUTrvc0BxPe24vb27OLs7OLs/s0iwUTrjs7BxPei9v/AE/9gNv/AKACgIvbOwUOi/dc29vb29v3XAG994T31PeEA/hW+bQVdgr3NPv8FTs724uLOzs7+4SLi9v3hIuL2/s0i4vb9zSLi9v7hIuL2/eEiwXbOwUOoHagdhK994T/AFACgP8An/2A2/eEE7j4Vvm0FXkK/////YD8TBX//6/9gIv//7AFAP8AUAKAi/8An/2A/wBQAoCLi///X/sA/wCf/YCLBdv//xAFABU7/wGP+wDb//5wAoAGDov3XNvbi9uL29v3XBK994Tb9zTb94QUBxOP+Fb5tBV5ChOf9zT7rBX7hAYTrzsHE5/3NIsFE6/bOwUTz4s7Ozv7NIs72wUTr9vbBxPPO/c02zsHE6872zuLi/c099SLBQ6L91zb29vb2/dcAb33hNv3NNv3hAMUDvim96wV2zsHO9uL+zQF2/icFXYK2/v8Fds7izs7O/s0izvbi/eE29v3NIvbO/uEi4s7BQ6L91z4JPdcAb33hP8BQAKA/wDv/YAD+Fb5tBV2Cv8AoAKA+/wV+zT7NIs7O4uL9wz3NPc0i7P//w/9gIuL2/8A8AKAi9s7BQ6L91zb29vb2/dcAb33hNv3NNv3hAMUDvgG+EwV9zTb+zQG+4QE9zTb+zQG2/hMFXYK9zT7/BVjY7Njizs7O/s0izvbi9uzs2Ozi9vb2/c0i9s7BQ6L91zb29vb2/dcAfgG9zTb94QD+Ab4nBU72wfbO4v3NAU796wVdgr3NPxMFYs7Ozv7NIs72/eEi4vb+zSLO9uL29vb9zSL2zsFDvw3+RT31AG99zQDvfpUFU8KDvoYFPk7FYuL+bSLBosMCvc0Cs+XpZKfkp+zs9sMDPc0C8+WrZ+Sn9uzswwNHAAwEwBaAgABABwAPQBJAFQAYAB6AKAAsQC5AMQA1gDlAPEBGwE1AUcBUgFfAY8BqAHjAgsCFgIkAjgCUwJrAoAClQKgAtsC8gL+AwYDIQNCA2oDigOgA/8ECAQZBCQEagSGBKIErQS5BMoE2wTpBPAFAgURBRoFOwVLBVoFgQWTBa8FuwXQBe4GAAYcBicGNgZLBnIGjQafBrUGxwbZBukG9wcJByAHOgdkB28HfQeJB5UH5wg5CEkInAjv9zT3NPc0i4v71Pc0i4v5FPs0i4v7NPuEiwUL+4T3NPwkBvs0+zT4xIv7NPs0+4SLi/s099SL9zT7NAUL9zT7NPh0i4v3NAULi/h0i/c0+zSLBQv8dIv7NPs0+RSLBQv3NPs0/MQH94T7hPjEi4v3NPx0i/s09zQFC/wki/s0+zT4dIvbO4v7hPs0+zT8JIv3NPs099SL94T3hIv4JAULi/h0i/c0+zSLi/209zSLBQv3NPm0+zQGC/kU9zT//h//wAYL/wCf/8D7NP8B4ABAi4v3NAUL/wCf/8D7NPfUi4v3NAUL9zT7NPfUi4v3NAUL+9T7NPeEBvc0+zT8JIv7NPc0i/fUi/c0+zSLi/zE94T7hPh0i4v3NAUL+zT7NDuLi/gk+zSLi/209zSLi/eE9zSLBQv3NPc09zSLi/wk9zSLi/m0BQv7NPjEB/s09zQFCzs7+9SLi/s0+CSLBQv9tPc099T31AfbO4v7hPc0i4v31Ps09zT3NIuL99T7NIuL+9T7hIv7NPs0i/h0BQv9tPc09zQH9zT7NPfUi4v3NPx0i4v5FAUL+9T7NAb7NPc0+4SL+zSLi/209zSLi/kU9zSL9zT7NIv8dPc0i4v4xDvb94SL9zT7NIv8dAX3NPjEBguL/CT8JPgk//8QAECLi/s09zSL/wHf/8D8dIv7NP8AoABAi4v5tAUL9zT5FAb7NPs0BQv8dPs0+HT8dPc0+HQGC/s0/HQG9zT7NPh0i4v3NPx0iwUL/HT7NPh0+zT71Ab7NPs0+HSL9zT3NIv3NAUL//7AAoD4dPs0/HQG9zT7NP8BP/2AiwUL+zT3NPx0i4v7NPh0i4v71Pc0iwULi/s09zT7NPc0i4v3NDuLO9uL2wUL9zT/AT/7APs0Bgv//2AKAP8AoAKA/HSLi///X/2A+HSLi///X/2A//6/9gCL//9gCgD//2AKAPh0i/8An/YA/wCf9gAFC/8AoAUA/wFABQAG/wE/+ID//1/7AAcLi/c0+zT3NPx0iwUL9zT3NPs0Bgv31P0U9zT5FPfU9zT71Ab7NPs0i/c0+9SLBQv9FPx0+RT7NP0UB/c0+zT31Iv3NPc0i/s09zSLi/m0BQv////9QPjE+zT8dAb7NPs0//8QAsCLi/kU+zSLi/0U9zT7NPfUiwUL9zT5tPs0/RT7NAb7NPc0i/h0+zSLi/zE2zv3NPs0BQv31Pc0+4QG+zT3NIv4dPs0i4v8xAUL2/s0+zQH94T//w/6wNuL+9T//r/7AIs79zSL+CT/AZAFAIv//1/9gPc0//9f/YCLO/c0i4v/AKACgPuE/wDwAoA7i/fU/wFABUCL2wX7NIv8JP/+b/rAi/8AoALABQv3NPc0i/c0BQuL9zT7NPc0i9v7NIuL+zQFC/c0+zSLO/c0iwUL/CSL+MT4xIvb+zSL+zT7NIv3NPwki/s0+zSL+zT3NIuL9zT4JIv8xPzEizv3NIsF9zT3NIv7NPgki/c09zSL9zT7NIsFC/s09zT3NPc0i/c0O4v7hPuEi/s094T7hNuLBQv3NPs0+zT7NIv7NNuL94T3hIv3NPuE94Q7iwULi/uE9zT3NIvbBQuL+9T3NPc0i/c0BQv/AIkjwP8ARJHA//923EAGC/8AoLXA/wCgtcD//19KQAYL/wCf/8D3NP//YABABgv//iAAQAYL+zT/Ad//wPx0/wCgAED4dAcL9zT7NP8B3//Ai4v3NAUL+zT//xAAQAcL//9f/8D7NP//sABAi4v31Iv3NPs0i4v9tPc0i4v3NAUL/wCf/8D71P8AoABA+RQGC///YABA+zT/Ad//wIsFC/s0/MQG/wDv/8D7hP8CMABAi4v3NP/+H//Ai///YABA9zSL99QFC//+H//Ai///YABA+zT5FIsFC///jt6A//+O3ED/AHEhgAb/AHEjwP8AcSPABQv/AH7cQP//jtxABwv//2AAQIv//1//wPs0/wCgAECLBQv//8qrgP//yquA//+VVECLi///lVSA/wCgAECLBQv/ADVXAP8ANVSA/wBqqQCLBQuL/CT8JPgk//8QAECLi/s09zSL/wHf/8D8dAUL+zT/AKAAQPm0Bwv9FP/+IABA+RT7NP0UBwv/AJ//wPc0i/s0/wCgAECLi/m0BQv//1//wPs0//+wAECLi/fUi/c0+zSLi/209zSLi/c0/wCf/8CLBQv/AKAAQPc0/wCf/8CLi/vU/wCgAECLi/kUBQv71Iv//2AAQPs0/wHf/8CLBQv/AJ//wPs0/wCgAECL//9f/8D3NAUL2zvb2zvb//9f/8CLOzvbOwUL/wA1VED/ADVUgP8AaqvAiwUL/wCgAED7NPc0i/s09zQFC/8AoABA+bT//1//wAYL+zSL//9f/8D7NP8AoABAiwUL//4gAED7NP8B3//A/HT/AKAAQPh0Bgv7NPx0Bvc0+zT/Ad//wIuL9zT//iAAQIsFC/0U//4gAED5FPs0/RQH9zT7NPfUi/8An//A9zSL+zT/AKAAQIuL+bQFC4v3hPs0+zSLOwUL9zT7NIs7/wCf/8CLBQuL9zT//2AAQPc0BQv/AKAAQPc0i/c0BQv/ALD9gP8Aj/2A//9wAoD//08CgP//TwKA//9wAoD//3ACgP//TwKA//9PAoD//3ACgP8Aj/2A/wCw/YD/ALD9gP8Aj/2A/wCP/YD/ALD9gB8L//8jFwD//0zpAP//TOkA//8jFwD//yMXAP8AsxcA//9M6QD/ANzpAP8A3OkA/wCzFwD/ALMXAP8A3OkA/wDc6QD//0zpAP8AsxcA//8jFwAfC/c0+zT3NPc09zT3NPs0Bgv/ALD9gP8Aj/2A//9wAoD//08CgP//TwKA//9wAoD//3ACgP//TwKA//9PAoD//3ACgP8Aj/2A/wCw/YAf/wCw/YD/AI/9gP8Aj/2A/wCw/YAeC///IxcA//9M6QD//0zpAP//IxcA//8jFwD/ALMXAP//TOkA/wDc6QD/ANzpAP8AsxcA/wCzFwD/ANzpAB//ANzpAP//TOkA/wCzFwD//yMXAB4LAAAAAAEAAAAAAAAADAAUAAQAAAACAAAAAQAAAAEAAAABAAAACgAsAC4AAkRGTFQADmxhdG4AGAAEAAAAAP//AAAABAAAAAD//wAAAAAAAAABAAAACgAwAD4AAkRGTFQADmxhdG4AGgAEAAAAAP//AAEAAAAEAAAAAP//AAEAAAABa2VybgAIAAAAAQAAAAEABAACAAAAAQAIAAEAGAAEAAAAAgAOAA4AAgAU/tQAOP7UAAEAAgAMADEAAAH0AAADhAAyBCQAMgOEADID1AAyA4QAMgOEADIEJAAyA4QAMgEEADIDNAAyAzQAMgLkADIExAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDNAAyBMQAMgPUADIDhAAyA9QAMgOEADIC5AAyAkQAMgLkADIC5AAyAuQAMgLkADIC5AAyAuQAMgLkADIC5AAyBMQAMgQkADIDhAAyA9QAMgOEADIDhAAyBCQAMgOEADIBBAAyAzQAMgM0ADIC5AAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDNAAyBMQAMgPUADIDhAAyA9QAMgJDADICQwAyAuQAMgLkADIBBAAyApQAMgEEADIBBAAyBCQAMgPUADIDNAAyAaMAMgGjADIBpAAyAuQAMgEEADIBzAAyAQQAMgH0ADICRAAyAfQAAAHMADICRAAyAPAAMgEEADIBpAAyAaQAMgGkADIBowAyAkQAMgMSADIDEgAyBIsAMgEEADIDiAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgGkADIBpAAyAaQAMgJEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgGkADIBpAAyAkQAMgGkADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyAkQAMgM0ADIB9AAyAfQAMgEEADIBBAAyA4QAMgOEADIClAAyAaQAMgGkADIB9AAyA4QAMgOEADIDhAAyA4QAMgL/ADIDhAAyAv4AMgL4ADIC+AAyAvgAMgL4ADIFjgAyA4QAMgUUADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgOEADIDhAAyA4QAMgEEADIAAAABAAAAAN/Wyl4AAAAA4UF3SgAAAADhgvZ5') format('opentype');
+                font-weight: normal;
+                font-style: normal;
+                font-display: block;
+            }
+            .st21, .cls-10 {
+                font-family: 'Lexa', sans-serif !important;
+                font-size: 80pt !important;
+                fill: #1A1A1A !important;
+                stroke: #E78E2E !important;
+                stroke-width: 2 !important;
+                stroke-linejoin: round !important;
+                paint-order: stroke !important;
+            }
+        `;
+
+                        svgClone.insertBefore(style, svgClone.firstChild);
+
+                        const svgString = new XMLSerializer().serializeToString(svgClone);
+
+                        // Дальше стандартная конвертация...
+                        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                        const svgUrl = URL.createObjectURL(svgBlob);
+
+                        const canvas = document.createElement('canvas');
+                        const targetSize = 2000;
+                        canvas.width = canvas.height = targetSize;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, targetSize, targetSize);
+
+                        const img = new Image();
+                        img.onload = function () {
+                            ctx.drawImage(img, 0, 0, targetSize, targetSize);
+                            canvas.toBlob(function (blob) {
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = 'шаблон-карточки.png';
+                                link.click();
+                                URL.revokeObjectURL(url);
+                                URL.revokeObjectURL(svgUrl);
+                            }, 'image/png');
+                        };
+
+                        img.src = svgUrl;
+
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                    }
+                }
+
+
+
+                // Функция для получения сегодняшней даты в формате "дд.мм"
+                function getTodayDate() {
+                    const today = new Date();
+                    const day = String(today.getDate()).padStart(2, '0'); // Добавляем ведущий ноль если нужно
+                    const month = String(today.getMonth() + 1).padStart(2, '0'); // Месяцы с 0 до 11
+                    return `${day}.${month}`;
+                }
+
+
+
+
+                // Переменные для позиции даты
+                let dateY = 0;
+
+                // Функция обновления позиции даты
+                function updateDatePosition() {
+                    const dateTextElement = document.querySelector('text[transform*="1060"]');
+
+                    if (dateTextElement) {
+                        // Полностью перезаписываем transform с новым значением Y
+                        const newTransform = `translate(1060 ${241.9 + dateY}) rotate(90)`;
+                        dateTextElement.setAttribute('transform', newTransform);
+
+                        console.log('Позиция даты обновлена:', dateY + 'px', 'Новый transform:', newTransform);
+                    } else {
+                        console.log('Элемент даты не найден');
+                    }
+                }
+
+                // Функция сброса позиции даты
+                function resetDatePosition() {
+                    dateY = 0;
+                    updateDatePosition();
+                    updateDateSliders();
+                }
+
+                // Обновление ползунков даты
+                function updateDateSliders() {
+                    document.getElementById('dateYSlider').value = dateY;
+                    document.getElementById('dateYValue').textContent = dateY;
+                }
+
+                // Обработчик ползунка для даты
+                document.getElementById('dateYSlider').addEventListener('input', function (e) {
+                    dateY = parseInt(e.target.value);
+                    updateDatePosition();
+                    updateDateSliders();
+                });
+
+                // Инициализация при загрузке
+                document.addEventListener('DOMContentLoaded', function () {
+                    updateDateSliders();
+                    updateDatePosition(); // Убедимся, что позиция установлена правильно
+                });
+            </script>
+</body>
+
+</html>
